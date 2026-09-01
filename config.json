@@ -1,0 +1,13 @@
+{
+  "payoff": {
+    "both_cooperate": 3,
+    "both_defect": 1,
+    "betrayed_cooperator": 0,
+    "betrayer_reward": 5
+  },
+  "rounds": {
+    "default": 100,
+    "unknown_horizon_min": 50,
+    "unknown_horizon_max": 200
+  }
+}
