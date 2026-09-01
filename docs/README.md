@@ -4,6 +4,10 @@ This folder contains all documentation for the Iterated Prisoner's Dilemma cours
 
 ## Files
 
+### Project Requirements & Rules
+- **[requirements.md](requirements.md)** — Technical specifications for all components to implement. **Start here for implementation.**
+- **[prompts.md](prompts.md)** — All user prompts and instructions (historical record, updated as new prompts arrive).
+
 ### Project Management
 - **[implementation_plan.md](implementation_plan.md)** — Development blueprint approved before coding started. Lists all deliverables, folder structure, and verification steps.
 - **[original_prompt.md](original_prompt.md)** — The original user prompt in Spanish (historical record).

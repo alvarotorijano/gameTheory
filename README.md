@@ -1,32 +1,72 @@
 # Iterated Prisoner's Dilemma: Course Project
 
-Welcome to the Iterated Prisoner's Dilemma tournament platform! This project is designed as a
-teaching tool where students implement their own strategies for the classic game theory problem
-and compete against each other.
+A tournament platform where students implement strategies for the Iterated Prisoner's Dilemma and compete against each other.
 
 ---
 
-## Project Overview
+## 📁 Project Structure
 
-The **Iterated Prisoner's Dilemma** is a two-player game where each player repeatedly chooses
-to either **cooperate** or **defect**. Based on both players' simultaneous choices, they
-receive points according to this payoff matrix:
-
-| Both Players | Payoff |
-|---|---|
-| Both Cooperate | 3 points each |
-| Both Defect | 1 point each |
-| One Cooperates, One Defects | Cooperator: 0, Defector: 5 |
-
-The challenge: **What strategy maximizes your score without knowing what your opponent will do?**
+```
+gameTheory/
+├── README.md                  # This file (entry point)
+├── config.json                # Game configuration (payoffs, round counts)
+├── requirements.txt           # Python dependencies (pytest only)
+├── .gitignore                 # Git exclusions
+├── agents/                    # Student agents (add yours here)
+├── utils/                     # Core library & CLI tools (will be implemented)
+├── tests/                     # Test suite (will be implemented)
+├── results/                   # Generated tournament CSVs (gitignored)
+└── docs/                      # Complete documentation
+    ├── README.md              # Documentation index (START HERE)
+    ├── README_MAIN.md         # Full project overview
+    ├── requirements.md        # Technical specifications
+    ├── CLAUDE.md              # Project rules & style guidelines
+    ├── prompts.md             # User prompts (historical record)
+    ├── game_rules.md          # Game mechanics explained
+    ├── architecture.md        # Technical design & components
+    ├── student_guide.md       # How to write your first agent
+    ├── installation.md        # Python environment setup
+    ├── implementation_plan.md # Development blueprint
+    └── [more docs...]         # Additional documentation
+```
 
 ---
 
-## Quick Start
+## 🚀 Quick Start
 
-### 1. Install Dependencies
+### For Students
+1. **Read:** [`docs/game_rules.md`](docs/game_rules.md) to understand the game
+2. **Follow:** [`docs/student_guide.md`](docs/student_guide.md) to write your first agent
+3. **Test:** `python utils/match_runner/run_match.py my_agent random_agent --rounds 50`
 
-See [`docs/installation.md`](docs/installation.md) for detailed instructions. Quick version:
+### For Instructors
+1. **Collect:** Student agent submissions using `collect_agents.py`
+2. **Run:** `python utils/tournament_runner/run_tournament.py`
+3. **Analyze:** Open the generated CSV to see results
+
+### For Developers
+1. **Read:** [`docs/requirements.md`](docs/requirements.md) for technical specs
+2. **Check:** [`docs/CLAUDE.md`](docs/CLAUDE.md) for project rules & style
+3. **Review:** [`docs/architecture.md`](docs/architecture.md) for design details
+
+---
+
+## 📚 Documentation
+
+**Start here:** [`docs/README.md`](docs/README.md) — Complete documentation index
+
+Key documents:
+- **[Project Overview](docs/README_MAIN.md)** — Full project description
+- **[Game Rules](docs/game_rules.md)** — How the game works (ida, vuelta, payoffs)
+- **[Technical Requirements](docs/requirements.md)** — What needs to be implemented
+- **[Student Guide](docs/student_guide.md)** — Write your first strategy
+- **[Installation](docs/installation.md)** — Python setup (venv, pyenv)
+- **[Project Rules](docs/CLAUDE.md)** — Constraints, style, best practices
+- **[Architecture](docs/architecture.md)** — Technical design & components
+
+---
+
+## ⚙️ Installation
 
 ```bash
 python -m venv .venv
@@ -41,332 +81,19 @@ source .venv/bin/activate
 pip install -r requirements.txt
 ```
 
-### 2. Run a Single Match
-
-Test the example agents against each other:
-
-```bash
-python utils/match_runner/run_match.py copycat_agent random_agent --rounds 50
-```
-
-**Output:**
-```
-Ida (copycat_agent vs random_agent):
-  copycat_agent: 145 points
-  random_agent: 68 points
-
-Vuelta (random_agent vs copycat_agent):
-  random_agent: 72 points
-  copycat_agent: 143 points
-
-Average:
-  copycat_agent: 144.0 points (WINNER)
-  random_agent: 70.0 points
-```
-
-### 3. Run the Full Tournament
-
-Discover all agents and play every matchup:
-
-```bash
-python utils/tournament_runner/run_tournament.py
-```
-
-Results are saved to `results/tournament.csv`. Open it in Excel or a spreadsheet viewer to
-analyze performance.
-
-### 4. Write Your First Agent
-
-See [`docs/student_guide.md`](docs/student_guide.md) for a step-by-step walkthrough:
-
-1. Copy `agents/copycat_agent/` to `agents/my_strategy/`.
-2. Edit `agent.py` to implement your logic.
-3. Test: `python utils/match_runner/run_match.py my_strategy random_agent --rounds 50`
-4. Update `README.md` with your strategy description.
+See [`docs/installation.md`](docs/installation.md) for detailed instructions.
 
 ---
 
-## How the Game Works
+## 📝 Project Status
 
-### Simultaneous Moves
+**Documentation Phase:** ✅ Complete  
+**Implementation Phase:** ⏳ Pending
 
-Each round, both agents decide their move **without knowing** what the opponent will do:
-
-1. Agent A's `play()` is called.
-2. Agent B's `play()` is called.
-3. Both moves are revealed simultaneously.
-4. Points are awarded.
-5. History is updated for the next round.
-
-### Ida and Vuelta (Two Legs)
-
-A complete match consists of **two legs** to ensure fairness:
-
-- **Ida:** Agent A plays first (is designated "Player 1"), Agent B is "Player 2".
-- **Vuelta:** Roles reverse — Agent B is "Player 1", Agent A is "Player 2".
-
-Both legs use the same number of rounds. The **average score** across both legs determines
-the match winner.
-
-### Tournament Structure
-
-The tournament runner plays **every agent against every other agent**, both orderings:
-- With *n* agents, there are *n²* matches (including self-play by default).
-- Each match includes both ida and vuelta, so *2n²* total legs.
-- Results are recorded in a CSV with detailed statistics per agent per leg.
+All project rules, specifications, and documentation are finalized. Ready to implement the core library, agents, tools, and tests.
 
 ---
 
-## Available Scripts
+## 📖 More Information
 
-### Match Runner (`utils/match_runner/run_match.py`)
-
-Play two agents against each other and see the result (ida + vuelta + average).
-
-**Usage:**
-```bash
-python utils/match_runner/run_match.py <agent_a> <agent_b> [--rounds N] [--unknown-horizon]
-```
-
-**Examples:**
-```bash
-# Play copycat against random, 50 rounds
-python utils/match_runner/run_match.py copycat_agent random_agent --rounds 50
-
-# Play with unknown horizon (random rounds, agent doesn't know the count)
-python utils/match_runner/run_match.py copycat_agent random_agent --unknown-horizon
-
-# Use default 100 rounds
-python utils/match_runner/run_match.py copycat_agent random_agent
-```
-
-**Output:** Ida score, Vuelta score, averages, and the winner.
-
----
-
-### Tournament Runner (`utils/tournament_runner/run_tournament.py`)
-
-Discover all agents and run a complete round-robin tournament, output CSV.
-
-**Usage:**
-```bash
-python utils/tournament_runner/run_tournament.py [--rounds N] [--unknown-horizon] [--no-self-play] [--output PATH]
-```
-
-**Examples:**
-```bash
-# Run tournament with default 100 rounds
-python utils/tournament_runner/run_tournament.py
-
-# Run tournament with 50 rounds per match
-python utils/tournament_runner/run_tournament.py --rounds 50
-
-# Exclude self-play (agents only play different agents)
-python utils/tournament_runner/run_tournament.py --no-self-play
-
-# Custom output file
-python utils/tournament_runner/run_tournament.py --output results/my_tournament.csv
-```
-
-**Output:** A CSV file (`results/tournament.csv` by default) with one row per `(agent, leg)`.
-
-**CSV Columns:**
-- `pairing_id`, `leg`, `num_rounds`
-- `agent_name`, `opponent_name`, `points_scored`, `opponent_points`
-- `first_move_cooperate`
-- `total_cooperations`, `total_defections`
-- `cooperate_after_opponent_defect`, `defect_after_opponent_defect`
-- `cooperate_after_opponent_cooperate`, `defect_after_opponent_cooperate`
-
----
-
-### Agent Collector (`utils/agent_collector/collect_agents.py`)
-
-Import student agents from GitHub repos or local files.
-
-**Usage:**
-```bash
-python utils/agent_collector/collect_agents.py --sources sources.json [--dry-run]
-```
-
-**Input Format** (`sources.json`):
-```json
-[
-  {
-    "student": "juan_perez",
-    "source": "https://github.com/juan_perez/pd-agent.git"
-  },
-  {
-    "student": "maria_lopez",
-    "source": "/local/path/to/maria_agent.py"
-  }
-]
-```
-
-**Behavior:**
-- Clones git repos or uses local paths.
-- Discovers all `Agent` subclasses (excluding the three examples).
-- Copies each agent to a new folder under `agents/`.
-- Renames to avoid collisions: `<student>_<filename>` if multiple agents per student.
-- `--dry-run` shows what would be imported without actually copying.
-
-A template `sources_example.json` is provided for reference.
-
----
-
-## Example Agents
-
-Three example agents are provided in the `agents/` folder:
-
-### `random_agent`
-Plays a random move each round. The baseline "fictitious opponent" for testing your strategy.
-
-### `copycat_agent`
-Classic tit-for-tat: cooperate on round 1, then play the opponent's last move.
-
-### `second_chance_agent`
-More sophisticated: forgives a single defection but retaliates if the opponent defects twice.
-See `agents/second_chance_agent/README.md` for details.
-
----
-
-## Configuration
-
-Game parameters are stored in `config.json`:
-
-```json
-{
-  "payoff": {
-    "both_cooperate": 3,
-    "both_defect": 1,
-    "betrayed_cooperator": 0,
-    "betrayer_reward": 5
-  },
-  "rounds": {
-    "default": 100,
-    "unknown_horizon_min": 50,
-    "unknown_horizon_max": 200
-  }
-}
-```
-
-- **Payoff values:** Instructors can adjust these to explore different game dynamics.
-- **Round counts:**
-  - `default`: Used if no `--rounds` flag is passed.
-  - `unknown_horizon_min/max`: Range for random round counts (when `--unknown-horizon` is used).
-
----
-
-## Testing
-
-Run all tests to verify the system:
-
-```bash
-python tests/run_tests.py
-```
-
-Or with pytest directly:
-
-```bash
-pytest tests/ -v
-```
-
-Tests cover:
-- Payoff scoring.
-- Example agents' behavior.
-- Match runner output.
-- Tournament CSV generation.
-- Agent discovery and import logic.
-
----
-
-## Project Structure
-
-```
-gameTheory/
-├── README.md                              # This file
-├── CLAUDE.md                              # Project constraints and rules
-├── config.json                            # Game parameters (editable)
-├── requirements.txt                       # Python dependencies (pytest only)
-├── agents/                                # Agent implementations
-│   ├── random_agent/
-│   ├── copycat_agent/
-│   ├── second_chance_agent/
-│   └── <your_agent>/
-├── utils/
-│   ├── game_core/                         # Game engine and interfaces
-│   ├── match_runner/                      # CLI: play two agents
-│   ├── tournament_runner/                 # CLI: round-robin all agents
-│   └── agent_collector/                   # CLI: import student agents
-├── docs/
-│   ├── game_rules.md                      # Game mechanics and scoring
-│   ├── architecture.md                    # Technical design
-│   ├── student_guide.md                   # How to write an agent
-│   ├── installation.md                    # Setup instructions
-│   ├── implementation_plan.md             # Development plan
-│   └── original_prompt.md                 # Original spec (Spanish)
-├── tests/                                 # Unit tests (pytest)
-│   ├── run_tests.py                       # Convenience wrapper
-│   ├── test_game_core.py
-│   ├── test_agents.py
-│   ├── test_match_runner.py
-│   ├── test_tournament_runner.py
-│   └── test_agent_collector.py
-└── results/                               # Generated CSVs (gitignored)
-```
-
----
-
-## Documentation
-
-- **[Game Rules](docs/game_rules.md)** — Detailed rules, payoff matrix, ida/vuelta structure.
-- **[Architecture](docs/architecture.md)** — Technical design, folder layout, component descriptions.
-- **[Student Guide](docs/student_guide.md)** — Step-by-step: write and test your first agent.
-- **[Installation](docs/installation.md)** — Python setup, virtual environments, pyenv (optional).
-- **[Implementation Plan](docs/implementation_plan.md)** — Development blueprint for the project.
-
----
-
-## Common Workflows
-
-### As a Student
-
-1. Follow [Student Guide](docs/student_guide.md) to implement your agent.
-2. Test locally: `python utils/match_runner/run_match.py my_agent random_agent --rounds 50`
-3. Push your agent to GitHub or give the file to the instructor.
-
-### As an Instructor
-
-1. Collect student submissions via `collect_agents.py` (GitHub links or files).
-2. Run tournament: `python utils/tournament_runner/run_tournament.py`
-3. Open the CSV in Excel to analyze results.
-4. (Optional) Debug individual matchups: `python utils/match_runner/run_match.py agent1 agent2 --rounds 100`
-
----
-
-## Troubleshooting
-
-**"ModuleNotFoundError: No module named utils"**
-- Make sure you're running scripts from the project root directory.
-- Check that `utils/` exists and contains `__init__.py` files.
-
-**"Agent not found"**
-- Verify the agent folder exists under `agents/`.
-- Check the class name matches the folder name (lowercased, underscored).
-- Run `python utils/tournament_runner/run_tournament.py --dry-run` (if implemented) to list discovered agents.
-
-**Tests failing**
-- Check that all dependencies are installed: `pip install -r requirements.txt`
-- Verify Python version: `python --version` (3.7+ required).
-
----
-
-## Questions or Issues?
-
-Refer to:
-- [`docs/student_guide.md`](docs/student_guide.md) — to write your first agent.
-- [`docs/game_rules.md`](docs/game_rules.md) — to understand the game.
-- [`docs/architecture.md`](docs/architecture.md) — for technical details.
-- Individual script READMEs in `utils/*/` for usage examples.
-
-Good luck with your strategies!
+For any questions or to learn more, see the documentation in [`docs/`](docs/) folder.

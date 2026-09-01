@@ -7,10 +7,10 @@
 
 ## What Was Done
 
-This phase completed all planning and documentation before any code implementation. The user provided a detailed specification in Spanish, and I created:
+This phase completed all planning and documentation before any code implementation. The user provided a detailed specification in Spanish, and comprehensive documentation was created.
 
 ### 1. **Implementation Plan** (Approved)
-- Saved to: `docs/implementation_plan.md`
+- Saved to: `implementation_plan.md`
 - Also available in `.claude/plans/cheerful-toasting-turtle.md`
 - **Covers:**
   - Complete folder structure for the project.
@@ -21,31 +21,32 @@ This phase completed all planning and documentation before any code implementati
   - Verification steps for end-to-end validation.
 
 ### 2. **Project Rules Document** (`CLAUDE.md`)
-- **Location:** Repository root
+- **Location:** `docs/CLAUDE.md`
 - **Contains:**
   - All code must be in English.
   - Claude cannot perform git operations (user handles all commits/pushes).
   - Every function must have a docstring.
   - Architecture constraints (local-only, configuration externalization).
   - Semantics clarifications (ida/vuelta, unknown horizon, moves as strings).
+  - Complete style guidelines and best practices.
 
 ### 3. **Comprehensive Documentation**
 
 #### For Students
-- **`docs/student_guide.md`** — Step-by-step walkthrough:
+- **`student_guide.md`** — Step-by-step walkthrough:
   - Copy copycat_agent as template.
   - Implement your `play()` method.
   - Test locally against random_agent.
   - Update your README with a Mermaid diagram.
 
 #### For Instructors & Developers
-- **`docs/game_rules.md`** — Game mechanics:
+- **`game_rules.md`** — Game mechanics:
   - Payoff matrix with examples.
   - Ida/vuelta structure and why it's needed.
   - Unknown horizon semantics.
   - Tournament structure explanation.
   
-- **`docs/architecture.md`** — Technical design:
+- **`architecture.md`** — Technical design:
   - Folder layout and component descriptions.
   - Agent base class interface with examples.
   - Game engine, payoff, agent discovery (AST-based).
@@ -53,23 +54,33 @@ This phase completed all planning and documentation before any code implementati
   - CSV schema for tournament results.
   - Deployment workflow.
 
-- **`docs/installation.md`** — Python environment setup:
+- **`installation.md`** — Python environment setup:
   - Quick start (venv + pip install).
   - Optional pyenv (Windows: pyenv-win, Unix: pyenv).
   - Troubleshooting common issues.
+
+- **`requirements.md`** — Technical specifications:
+  - Complete specifications for all components to implement.
+  - Game mechanics (locked).
+  - Dependencies and folder structure.
+  - Verification steps.
+
+- **`prompts.md`** — User prompts (historical record):
+  - All user instructions saved verbatim.
+  - Timestamped for traceability.
 
 ### 4. **Project Infrastructure**
 
 | File | Purpose |
 |---|---|
-| `README.md` | Project overview, quick start, usage examples, links to docs. |
 | `config.json` | Configurable payoff matrix and round-count settings. |
 | `requirements.txt` | Python dependencies (pytest only). |
 | `.gitignore` | Python cache, venv, results/, agent cache, sources.json. |
+| `README_MAIN.md` | Project overview, quick start, usage examples, links to docs. |
 | `docs/original_prompt.md` | Original Spanish prompt (historical record). |
 
 ### 5. **Memory for Future Sessions**
-- Saved to: `C:\Users\The_menda14\.claude\projects\c--Users-The-menda14-Desktop-ICAI-gameTheory\memory\`
+- Project context saved for continuity across sessions.
 - Contains project overview, requirements, deliverables, and progress tracking.
 
 ---
@@ -123,9 +134,6 @@ When the user says "start implementation" or provides a go-ahead signal, Claude 
 
 ```
 gameTheory/
-├── CLAUDE.md                              # Project rules (locked)
-├── README.md                              # Overview and quick start
-├── DOCUMENTATION_PHASE_SUMMARY.md         # This file
 ├── config.json                            # Game configuration (editable)
 ├── requirements.txt                       # Dependencies (pytest only)
 ├── .gitignore                             # Excludes cache, results, sources.json
@@ -133,6 +141,11 @@ gameTheory/
 ├── utils/                                 # (empty, ready for core library & CLI)
 ├── docs/
 │   ├── README.md                          # Documentation index
+│   ├── README_MAIN.md                     # Main project overview
+│   ├── CLAUDE.md                          # Project rules and constraints
+│   ├── requirements.md                    # Technical specifications
+│   ├── prompts.md                         # User prompts (historical record)
+│   ├── CHECKLIST.md                       # Completion checklist
 │   ├── original_prompt.md                 # Spanish prompt (archive)
 │   ├── implementation_plan.md             # Approved blueprint
 │   ├── game_rules.md                      # Game mechanics
@@ -150,11 +163,13 @@ gameTheory/
 
 ✅ **Documentation Completeness:** Covers all user stories (student perspective, instructor perspective, developer perspective).
 
-✅ **Constraint Compliance:** All rules from the user's original prompt are reflected in CLAUDE.md and documentation.
+✅ **Constraint Compliance:** All rules from the user's original prompt are reflected in `CLAUDE.md` and documentation.
 
 ✅ **Accessibility:** Documentation is clear, with examples, step-by-step guides, and troubleshooting sections.
 
 ✅ **Consistency:** All file references, code examples, and conceptual descriptions are aligned with the plan.
+
+✅ **Organization:** All documentation moved to `docs/` folder for cleaner project structure.
 
 ---
 

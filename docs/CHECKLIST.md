@@ -3,10 +3,9 @@
 ## ✅ User Requirements Addressed
 
 ### Core Project Setup
-- [x] Project location: `c:\Users\The_menda14\Desktop\ICAI\gameTheory`
 - [x] Git repository initialized (already existing)
 - [x] Implementation plan created and approved
-- [x] User's original prompt saved (Spanish): `docs/original_prompt.md`
+- [x] User's original prompt saved (Spanish): `original_prompt.md`
 - [x] Project rules document created: `CLAUDE.md`
 
 ### Constraints Locked
@@ -15,6 +14,7 @@
 - [x] Every function must have docstring
 - [x] Everything runs locally (no external services)
 - [x] Configuration externalized to `config.json`
+- [x] No absolute/local machine paths (only relative paths)
 
 ### Game Mechanics Documented
 - [x] Payoff matrix (both_cooperate: 3, both_defect: 1, betrayed: 0, betrayer: 5)
@@ -34,15 +34,17 @@
 - [x] `results/` (ready for generated CSVs, in .gitignore)
 
 ### Documentation Deliverables
-- [x] `README.md` (project overview, quick start, usage examples)
-- [x] `docs/game_rules.md` (payoff matrix, ida/vuelta, unknown horizon, tournament)
-- [x] `docs/architecture.md` (technical design, components, interfaces, CSV schema)
-- [x] `docs/student_guide.md` (step-by-step: copy template, implement, test)
-- [x] `docs/installation.md` (venv, pyenv optional, dependencies)
-- [x] `docs/implementation_plan.md` (full blueprint from approved plan)
-- [x] `docs/original_prompt.md` (Spanish prompt, historical record)
-- [x] `docs/README.md` (documentation index)
+- [x] `README_MAIN.md` (project overview, quick start, usage examples)
+- [x] `game_rules.md` (payoff matrix, ida/vuelta, unknown horizon, tournament)
+- [x] `architecture.md` (technical design, components, interfaces, CSV schema)
+- [x] `student_guide.md` (step-by-step: copy template, implement, test)
+- [x] `installation.md` (venv, pyenv optional, dependencies)
+- [x] `implementation_plan.md` (full blueprint from approved plan)
+- [x] `original_prompt.md` (Spanish prompt, historical record)
+- [x] `README.md` (documentation index)
 - [x] `CLAUDE.md` (project rules and constraints)
+- [x] `requirements.md` (technical specifications for implementation)
+- [x] `prompts.md` (user prompts historical record)
 
 ### Agent Interface Design
 - [x] Agent base class interface specified: `play(own_history, opponent_history) -> str`
@@ -67,7 +69,7 @@
 - [x] pytest selected as test runner
 - [x] pytest added to `requirements.txt`
 - [x] Test coverage planned (game_core, agents, match_runner, tournament, collector)
-- [x] Test structure documented in `docs/architecture.md`
+- [x] Test structure documented in `architecture.md`
 
 ### Installation & Dependencies
 - [x] `requirements.txt` created (pytest only)
@@ -80,15 +82,16 @@
 - [x] `config.json` created with payoff matrix and round-count settings
 - [x] `.gitignore` created (Python cache, venv, results/, agent cache, sources.json)
 - [x] Memory saved for future sessions
-- [x] Documentation index created (`docs/README.md`)
+- [x] Documentation index created (`README.md`)
+- [x] All documentation moved to `docs/` folder
 
 ### Verification & Quality
 - [x] Implementation plan saved to `.claude/plans/` for reference
-- [x] All user constraints documented in CLAUDE.md
-- [x] All requirements cross-referenced to implementation plan
+- [x] All user constraints documented in `CLAUDE.md`
+- [x] All requirements cross-referenced in `requirements.md`
 - [x] All documentation files reviewed for consistency
 - [x] File structure matches planned layout
-- [x] Summary document created (`DOCUMENTATION_PHASE_SUMMARY.md`)
+- [x] Documentation organization completed (prompts, requirements separated)
 
 ---
 
@@ -103,29 +106,40 @@ When the user signals go-ahead, implementation will proceed in this order:
 3. **CLI scripts** (`utils/`) — 3 scripts, each with tool README.md
 4. **Tests** (`tests/`) — 5 test files + run_tests.py + README.md
 
-All code will include docstrings, follow the constraints in CLAUDE.md, and be verified by the test suite.
+All code will include docstrings, follow the constraints in `CLAUDE.md`, and be verified by the test suite.
 
 ---
 
-## 📁 File Manifest
+## 📁 Final File Structure
 
-**Documentation Files (Created):**
+**Documentation (in `docs/`):**
 ```
-CLAUDE.md
-README.md
-DOCUMENTATION_PHASE_SUMMARY.md
-CHECKLIST.md (this file)
-config.json
-requirements.txt
-.gitignore
 docs/
-  ├── README.md
-  ├── original_prompt.md
-  ├── implementation_plan.md
-  ├── game_rules.md
-  ├── architecture.md
-  ├── student_guide.md
-  └── installation.md
+  ├── README.md                  # Documentation index
+  ├── README_MAIN.md             # Main project overview
+  ├── CLAUDE.md                  # Project rules and constraints
+  ├── requirements.md            # Technical specifications for implementation
+  ├── prompts.md                 # User prompts (historical record)
+  ├── CHECKLIST.md               # This file
+  ├── original_prompt.md         # Spanish prompt
+  ├── implementation_plan.md     # Implementation blueprint
+  ├── game_rules.md              # Game mechanics
+  ├── architecture.md            # Technical design
+  ├── student_guide.md           # How to write an agent
+  └── installation.md            # Python setup guide
+```
+
+**Project Root (Configuration & Temporary):**
+```
+gameTheory/
+  ├── config.json                # Game parameters
+  ├── requirements.txt           # Python dependencies
+  ├── .gitignore                 # Git exclusions
+  ├── agents/                    # Agent implementations
+  ├── utils/                     # Core library & CLI tools
+  ├── tests/                     # Test suite
+  ├── docs/                      # All documentation
+  └── results/                   # Generated CSVs (gitignored)
 ```
 
 **Folders Ready for Implementation:**
@@ -153,5 +167,5 @@ results/ (empty, ready for generated CSVs)
 
 ---
 
-**Created:** September 1, 2026  
-**Status:** Documentation phase complete, implementation pending user signal
+**Updated:** September 1, 2026  
+**Status:** Documentation phase complete, all docs in `docs/` folder, implementation pending user signal
