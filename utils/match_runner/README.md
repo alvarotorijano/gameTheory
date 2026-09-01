@@ -69,13 +69,13 @@ SUMMARY
 ============================================================
 
 copycat_agent:
-  Ida:    250 points
-  Vuelta: 240 points
+  First Leg:    250 points
+  Second Leg: 240 points
   Average: 245.0 points
 
 random_agent:
-  Ida:    150 points
-  Vuelta: 160 points
+  First Leg:    150 points
+  Second Leg: 160 points
   Average: 155.0 points
 
 ============================================================
@@ -83,10 +83,10 @@ RESULT: copycat_agent WINS by 90.0 points on average
 ============================================================
 ```
 
-## What is Ida/Vuelta?
+## What is First Leg/Second Leg?
 
-- **Ida (First Leg):** Agent A plays as Player 1, Agent B as Player 2
-- **Vuelta (Second Leg):** Roles reverse — Agent B as Player 1, Agent A as Player 2
+- **First Leg (First Leg):** Agent A plays as Player 1, Agent B as Player 2
+- **Second Leg (Second Leg):** Roles reverse — Agent B as Player 1, Agent A as Player 2
 
 This fairness mechanism accounts for any first-mover advantages.
 

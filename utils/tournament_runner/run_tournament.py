@@ -125,7 +125,11 @@ Examples:
     agents = discover_agents(agents_dir)
 
     if not agents:
-        print("Error: No agents found in agents/", file=sys.stderr)
+        print("❌ Error: No agents found in agents/ folder.", file=sys.stderr)
+        print("\n📋 To add agents:", file=sys.stderr)
+        print("   1. Create a folder: agents/<agent_name>/", file=sys.stderr)
+        print("   2. Add agent.py with an Agent subclass", file=sys.stderr)
+        print("   3. Example: agents/random_agent/agent.py", file=sys.stderr)
         sys.exit(1)
 
     if args.verbose:

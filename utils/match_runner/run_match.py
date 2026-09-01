@@ -72,18 +72,22 @@ Examples:
     agents = discover_agents(agents_dir)
 
     if args.agent_a not in agents:
-        print(f"Error: Agent '{args.agent_a}' not found.", file=sys.stderr)
-        print(f"Available agents: {', '.join(agents.keys())}", file=sys.stderr)
+        print(f"❌ Error: Agent '{args.agent_a}' does not exist.", file=sys.stderr)
+        print(f"\n✅ Available agents:", file=sys.stderr)
+        for agent_name in sorted(agents.keys()):
+            print(f"   - {agent_name}", file=sys.stderr)
         sys.exit(1)
 
     if args.agent_b not in agents:
-        print(f"Error: Agent '{args.agent_b}' not found.", file=sys.stderr)
-        print(f"Available agents: {', '.join(agents.keys())}", file=sys.stderr)
+        print(f"❌ Error: Agent '{args.agent_b}' does not exist.", file=sys.stderr)
+        print(f"\n✅ Available agents:", file=sys.stderr)
+        for agent_name in sorted(agents.keys()):
+            print(f"   - {agent_name}", file=sys.stderr)
         sys.exit(1)
 
-    # Run Ida (A vs B)
+    # Run First Leg (A vs B)
     print(f"{'='*60}")
-    print(f"IDA: {args.agent_a} (Player 1) vs {args.agent_b} (Player 2)")
+    print(f"FIRST LEG: {args.agent_a} (Player 1) vs {args.agent_b} (Player 2)")
     print(f"Rounds: {num_rounds_ida}")
     print(f"{'='*60}")
 
@@ -104,9 +108,9 @@ Examples:
     print(f"  {args.agent_b}: {result_ida.agent_b_score} points")
     print()
 
-    # Run Vuelta (B vs A)
+    # Run Second Leg (B vs A)
     print(f"{'='*60}")
-    print(f"VUELTA: {args.agent_b} (Player 1) vs {args.agent_a} (Player 2)")
+    print(f"SECOND LEG: {args.agent_b} (Player 1) vs {args.agent_a} (Player 2)")
     print(f"Rounds: {num_rounds_vuelta}")
     print(f"{'='*60}")
 
@@ -122,32 +126,32 @@ Examples:
         verbose=args.verbose,
     )
 
-    print(f"\nVUELTA Results:")
+    print(f"\nSECOND LEG Results:")
     print(f"  {args.agent_b}: {result_vuelta.agent_a_score} points")
     print(f"  {args.agent_a}: {result_vuelta.agent_b_score} points")
     print()
 
     # Calculate averages
-    total_ida_a = result_ida.agent_a_score
-    total_ida_b = result_ida.agent_b_score
-    total_vuelta_a = result_vuelta.agent_b_score  # Note: roles reversed in vuelta
-    total_vuelta_b = result_vuelta.agent_a_score
+    total_first_leg_a = result_ida.agent_a_score
+    total_first_leg_b = result_ida.agent_b_score
+    total_second_leg_a = result_vuelta.agent_b_score  # Note: roles reversed in second leg
+    total_second_leg_b = result_vuelta.agent_a_score
 
-    avg_a = (total_ida_a + total_vuelta_a) / 2
-    avg_b = (total_ida_b + total_vuelta_b) / 2
+    avg_a = (total_first_leg_a + total_second_leg_a) / 2
+    avg_b = (total_first_leg_b + total_second_leg_b) / 2
 
     # Display summary
     print(f"{'='*60}")
     print(f"SUMMARY")
     print(f"{'='*60}")
     print(f"\n{args.agent_a}:")
-    print(f"  Ida:    {total_ida_a} points")
-    print(f"  Vuelta: {total_vuelta_a} points")
+    print(f"  First Leg:  {total_first_leg_a} points")
+    print(f"  Second Leg: {total_second_leg_a} points")
     print(f"  Average: {avg_a:.1f} points")
 
     print(f"\n{args.agent_b}:")
-    print(f"  Ida:    {total_ida_b} points")
-    print(f"  Vuelta: {total_vuelta_b} points")
+    print(f"  First Leg:  {total_first_leg_b} points")
+    print(f"  Second Leg: {total_second_leg_b} points")
     print(f"  Average: {avg_b:.1f} points")
 
     print(f"\n{'='*60}")

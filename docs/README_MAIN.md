@@ -51,11 +51,11 @@ python utils/match_runner/run_match.py copycat_agent random_agent --rounds 50
 
 **Output:**
 ```
-Ida (copycat_agent vs random_agent):
+First Leg (copycat_agent vs random_agent):
   copycat_agent: 145 points
   random_agent: 68 points
 
-Vuelta (random_agent vs copycat_agent):
+Second Leg (random_agent vs copycat_agent):
   random_agent: 72 points
   copycat_agent: 143 points
 
@@ -98,12 +98,12 @@ Each round, both agents decide their move **without knowing** what the opponent 
 4. Points are awarded.
 5. History is updated for the next round.
 
-### Ida and Vuelta (Two Legs)
+### First Leg and Second Leg (Two Legs)
 
 A complete match consists of **two legs** to ensure fairness:
 
-- **Ida:** Agent A plays first (is designated "Player 1"), Agent B is "Player 2".
-- **Vuelta:** Roles reverse — Agent B is "Player 1", Agent A is "Player 2".
+- **First Leg:** Agent A plays first (is designated "Player 1"), Agent B is "Player 2".
+- **Second Leg:** Roles reverse — Agent B is "Player 1", Agent A is "Player 2".
 
 Both legs use the same number of rounds. The **average score** across both legs determines
 the match winner.
@@ -140,7 +140,7 @@ python utils/match_runner/run_match.py copycat_agent random_agent --unknown-hori
 python utils/match_runner/run_match.py copycat_agent random_agent
 ```
 
-**Output:** Ida score, Vuelta score, averages, and the winner.
+**Output:** First Leg score, Second Leg score, averages, and the winner.
 
 ---
 

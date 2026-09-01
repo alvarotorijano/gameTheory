@@ -31,9 +31,10 @@ This folder contains all documentation for the Iterated Prisoner's Dilemma cours
 
 ### "I'm an instructor and want to run a tournament"
 1. Read [architecture.md](architecture.md) to understand the system.
-2. Collect student agents using `collect_agents.py` (described in architecture).
-3. Run `tournament_runner.py` to generate results.
-4. Open the CSV to analyze performance.
+2. Prepare a `sources.json` with student repository URLs or file paths.
+3. Run: `python utils/agent_collector/collect_agents.py --sources sources.json`
+4. Run: `python utils/tournament_runner/run_tournament.py --verbose`
+5. Open `results/tournament.csv` to analyze performance and statistics.
 
 ### "I'm a developer and want to understand the system"
 1. Read [implementation_plan.md](implementation_plan.md) for the overall design.
