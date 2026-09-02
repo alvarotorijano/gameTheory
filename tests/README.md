@@ -36,7 +36,7 @@ pytest tests/test_agents.py::TestCopycatAgent -v  # Run specific test class
 |---|---|
 | `test_game_core.py` | Payoff scoring, engine, agent base class |
 | `test_agents.py` | Example agent behavior (random, copycat, second_chance) |
-| `test_match_runner.py` | CLI output, ida/vuelta/average calculations |
+| `test_match_runner.py` | CLI output, match calculations |
 | `test_tournament_runner.py` | CSV schema, column types, value correctness |
 | `test_agent_collector.py` | Agent discovery, file copying, exclusion logic |
 
@@ -62,4 +62,4 @@ pytest tests/test_agents.py::TestCopycatAgent -v  # Run specific test class
 - **Fast:** Tests run quickly for fast feedback
 - **Readable:** Test names describe what they test
 
-See [`../docs/requirements.md`](../docs/requirements.md) for complete test specifications.
+See [../docs/requirements.md](../docs/requirements.md) for complete test specifications.
