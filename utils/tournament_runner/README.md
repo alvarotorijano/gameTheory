@@ -15,7 +15,7 @@ python utils/tournament_runner/run_tournament.py [OPTIONS]
 - `--rounds N` — Rounds per leg **(required)**
 - `--unknown-horizon` — Agents don't know the round count (cannot plan strategy ahead)
 - `--no-self-play` — Exclude self-play matches
-- `--output FILE` — Output CSV file (default: `results/tournament.csv`)
+- `--output FILE` — Output CSV file (default: auto-generated with timestamp + flags)
 - `--verbose` — Show progress information
 
 ## Examples
@@ -33,21 +33,48 @@ python utils/tournament_runner/run_tournament.py --rounds 50
 ### Tournament with unknown horizon (agents don't know round count)
 ```bash
 python utils/tournament_runner/run_tournament.py --rounds 100 --unknown-horizon
+# Output: results/tournament_02092026-143120_rounds100_unknown-horizon.csv
 ```
 
-### No Self-Play (agents don't play themselves)
+### Tournament without self-play
 ```bash
-python utils/tournament_runner/run_tournament.py --no-self-play
+python utils/tournament_runner/run_tournament.py --rounds 100 --no-self-play
+# Output: results/tournament_02092026-143135_rounds100_no-self-play.csv
 ```
 
-### Verbose Output (see progress)
+### Verbose output with multiple flags
 ```bash
-python utils/tournament_runner/run_tournament.py --verbose
+python utils/tournament_runner/run_tournament.py --rounds 50 --unknown-horizon --no-self-play --verbose
+# Output: results/tournament_02092026-143150_rounds50_unknown-horizon_no-self-play.csv
 ```
 
-### Custom Output File
+### Custom output filename
 ```bash
-python utils/tournament_runner/run_tournament.py --output results/tournament_custom.csv
+python utils/tournament_runner/run_tournament.py --rounds 100 --output results/my_tournament.csv
+# Output: results/my_tournament.csv
+```
+
+## Output File
+
+### Auto-Generated Filenames
+
+By default, tournament results are saved with a **timestamp and flags** in the filename:
+
+**Format:** `tournament_DDMMYYYY-HHMMSS_<flags>.csv`
+
+**Examples:**
+- `tournament_02092026-143052_rounds100.csv` — 100 rounds, known horizon, with self-play
+- `tournament_02092026-143105_rounds50_unknown-horizon.csv` — 50 rounds, unknown horizon
+- `tournament_02092026-143120_rounds100_no-self-play.csv` — 100 rounds, no self-play
+- `tournament_02092026-143135_rounds50_unknown-horizon_no-self-play.csv` — All flags combined
+
+This allows **multiple tournaments to run without overwriting** previous results.
+
+### Custom Filename
+
+To use a custom filename instead:
+```bash
+python utils/tournament_runner/run_tournament.py --rounds 100 --output results/my_custom_name.csv
 ```
 
 ## Output CSV

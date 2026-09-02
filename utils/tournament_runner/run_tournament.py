@@ -1,13 +1,14 @@
 """
 Tournament Runner: Execute a complete round-robin tournament.
 
-Discovers all agents, plays every pairing (both directions), and outputs CSV results.
+Discovers all agents, plays every unique pairing once (simultaneous moves), and outputs CSV results.
 """
 
 import argparse
 import csv
 import random
 import sys
+from datetime import datetime
 from pathlib import Path
 from typing import List
 
@@ -45,16 +46,28 @@ except ImportError as e:
     sys.exit(1)
 
 
+def generate_output_filename(args) -> str:
+    """
+    Generate output filename with timestamp and flags.
+
+    Format: tournament_DDMMYYYY-HHMMSS_<flags>.csv
+    """
+    now = datetime.now()
+    timestamp = now.strftime("%d%m%Y-%H%M%S")
+
+    flags = [f"rounds{args.rounds}"]
+    if args.unknown_horizon:
+        flags.append("unknown-horizon")
+    if args.no_self_play:
+        flags.append("no-self-play")
+
+    flags_str = "_".join(flags)
+    return f"tournament_{timestamp}_{flags_str}.csv"
+
+
 def calculate_statistics(agent_history: List[str], opponent_history: List[str]):
     """
-    Calculate behavioral statistics for an agent in one leg.
-
-    Parameters:
-        agent_history: List of agent's moves.
-        opponent_history: List of opponent's moves.
-
-    Returns:
-        Dict with cooperation/defection statistics.
+    Calculate behavioral statistics for an agent in one match.
     """
     total_cooperations = agent_history.count(COOPERATE)
     total_defections = agent_history.count(DEFECT)
@@ -73,7 +86,7 @@ def calculate_statistics(agent_history: List[str], opponent_history: List[str]):
                 cooperate_after_opponent_cooperate += 1
             else:
                 defect_after_opponent_cooperate += 1
-        else:  # prev_opponent_move == DEFECT
+        else:
             if current_agent_move == COOPERATE:
                 cooperate_after_opponent_defect += 1
             else:
@@ -95,19 +108,15 @@ def calculate_statistics(agent_history: List[str], opponent_history: List[str]):
 def main():
     """
     Main entry point for tournament runner.
-
-    Discovers all agents, runs round-robin tournament, outputs CSV.
     """
     parser = argparse.ArgumentParser(
         description="Run a complete round-robin tournament with all agents",
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog="""
 Examples:
-  python run_tournament.py
-  python run_tournament.py --rounds 50
-  python run_tournament.py --unknown-horizon
-  python run_tournament.py --no-self-play
-  python run_tournament.py --output results/my_tournament.csv
+  python utils/tournament_runner/run_tournament.py --rounds 100
+  python utils/tournament_runner/run_tournament.py --rounds 50 --no-self-play
+  python utils/tournament_runner/run_tournament.py --rounds 100 --unknown-horizon
         """,
     )
 
@@ -115,7 +124,7 @@ Examples:
         "--rounds",
         type=int,
         required=True,
-        help="Number of rounds per leg (required)",
+        help="Number of rounds per match (required)",
     )
     parser.add_argument(
         "--unknown-horizon",
@@ -129,8 +138,8 @@ Examples:
     )
     parser.add_argument(
         "--output",
-        default="results/tournament.csv",
-        help="Output CSV file (default: results/tournament.csv)",
+        default=None,
+        help="Output CSV file (default: auto-generated with timestamp and flags)",
     )
     parser.add_argument(
         "--verbose",
@@ -140,8 +149,13 @@ Examples:
 
     args = parser.parse_args()
 
-    # Create output directory
-    output_path = Path(args.output)
+    # Determine output file
+    if args.output is None:
+        filename = generate_output_filename(args)
+        output_path = Path("results") / filename
+    else:
+        output_path = Path(args.output)
+
     output_path.parent.mkdir(parents=True, exist_ok=True)
 
     # Discover agents
@@ -159,143 +173,76 @@ Examples:
     if args.verbose:
         print(f"Discovered {len(agents)} agents: {', '.join(agents.keys())}")
 
-    # Get configuration
-    config = get_config()
     num_rounds = args.rounds
 
-    # Run tournament
-    results = []
-    pairing_id = 0
-
+    # Generate unique pairings (A vs B only, not B vs A)
     agent_names = sorted(agents.keys())
-    total_pairings = len(agent_names) ** 2 if not args.no_self_play else len(agent_names) * (len(agent_names) - 1)
-    current_pairing = 0
+    if args.no_self_play:
+        pairings = [(a, b) for i, a in enumerate(agent_names) for b in agent_names[i+1:]]
+    else:
+        pairings = [(a, b) for i, a in enumerate(agent_names) for b in agent_names[i:]]
 
-    for agent_a_name in agent_names:
-        for agent_b_name in agent_names:
-            if args.no_self_play and agent_a_name == agent_b_name:
-                continue
+    results = []
+    total_pairings = len(pairings)
 
-            current_pairing += 1
+    for idx, (agent_a_name, agent_b_name) in enumerate(pairings, 1):
+        if args.verbose:
+            print(f"[{idx}/{total_pairings}] {agent_a_name} vs {agent_b_name}...", end=" ", flush=True)
 
-            if args.verbose:
-                print(f"[{current_pairing}/{total_pairings}] {agent_a_name} vs {agent_b_name}...", end=" ", flush=True)
+        # Agents get num_rounds only if horizon is known
+        agent_rounds = None if args.unknown_horizon else num_rounds
 
-            # Engine always plays the specified number of rounds
-            num_rounds_first_leg = num_rounds
-            num_rounds_second_leg = num_rounds
+        # Execute match (simultaneous moves)
+        agent_a = agents[agent_a_name](num_rounds=agent_rounds)
+        agent_b = agents[agent_b_name](num_rounds=agent_rounds)
 
-            # Agents get num_rounds only if horizon is known
-            agent_rounds = None if args.unknown_horizon else num_rounds
+        result = run_leg(
+            agent_a,
+            agent_b,
+            num_rounds,
+            agent_a_name=agent_a_name,
+            agent_b_name=agent_b_name,
+            verbose=False,
+        )
 
-            # FIRST LEG
-            agent_a_first_leg = agents[agent_a_name](num_rounds=agent_rounds)
-            agent_b_first_leg = agents[agent_b_name](num_rounds=agent_rounds)
+        stats_a = calculate_statistics(result.agent_a_history, result.agent_b_history)
+        stats_b = calculate_statistics(result.agent_b_history, result.agent_a_history)
 
-            result_first_leg = run_leg(
-                agent_a_first_leg,
-                agent_b_first_leg,
-                num_rounds_first_leg,
-                agent_a_name=agent_a_name,
-                agent_b_name=agent_b_name,
-                verbose=False,
-            )
+        # Record both perspectives (same match, different perspectives)
+        results.append({
+            "pairing_id": idx - 1,
+            "num_rounds": result.num_rounds,
+            "agent_name": agent_a_name,
+            "opponent_name": agent_b_name,
+            "points_scored": result.agent_a_score,
+            "opponent_points": result.agent_b_score,
+            "first_move_cooperate": stats_a["first_move_cooperate"],
+            "total_cooperations": stats_a["total_cooperations"],
+            "total_defections": stats_a["total_defections"],
+            "cooperate_after_opponent_cooperate": stats_a["cooperate_after_opponent_cooperate"],
+            "defect_after_opponent_cooperate": stats_a["defect_after_opponent_cooperate"],
+            "cooperate_after_opponent_defect": stats_a["cooperate_after_opponent_defect"],
+            "defect_after_opponent_defect": stats_a["defect_after_opponent_defect"],
+        })
 
-            stats_first_leg_a = calculate_statistics(result_first_leg.agent_a_history, result_first_leg.agent_b_history)
-            stats_first_leg_b = calculate_statistics(result_first_leg.agent_b_history, result_first_leg.agent_a_history)
+        results.append({
+            "pairing_id": idx - 1,
+            "num_rounds": result.num_rounds,
+            "agent_name": agent_b_name,
+            "opponent_name": agent_a_name,
+            "points_scored": result.agent_b_score,
+            "opponent_points": result.agent_a_score,
+            "first_move_cooperate": stats_b["first_move_cooperate"],
+            "total_cooperations": stats_b["total_cooperations"],
+            "total_defections": stats_b["total_defections"],
+            "cooperate_after_opponent_cooperate": stats_b["cooperate_after_opponent_cooperate"],
+            "defect_after_opponent_cooperate": stats_b["defect_after_opponent_cooperate"],
+            "cooperate_after_opponent_defect": stats_b["cooperate_after_opponent_defect"],
+            "defect_after_opponent_defect": stats_b["defect_after_opponent_defect"],
+        })
 
-            # SECOND LEG
-            agent_a_second_leg = agents[agent_a_name](num_rounds=agent_rounds)
-            agent_b_second_leg = agents[agent_b_name](num_rounds=agent_rounds)
-
-            result_second_leg = run_leg(
-                agent_b_second_leg,
-                agent_a_second_leg,
-                num_rounds_second_leg,
-                agent_a_name=agent_b_name,
-                agent_b_name=agent_a_name,
-                verbose=False,
-            )
-
-            stats_second_leg_a = calculate_statistics(result_second_leg.agent_a_history, result_second_leg.agent_b_history)
-            stats_second_leg_b = calculate_statistics(result_second_leg.agent_b_history, result_second_leg.agent_a_history)
-
-            # Record IDA row (agent_a perspective)
-            results.append({
-                "pairing_id": pairing_id,
-                "leg": "first_leg",
-                "num_rounds": result_first_leg.num_rounds,
-                "agent_name": agent_a_name,
-                "opponent_name": agent_b_name,
-                "points_scored": result_first_leg.agent_a_score,
-                "opponent_points": result_first_leg.agent_b_score,
-                "first_move_cooperate": stats_first_leg_a["first_move_cooperate"],
-                "total_cooperations": stats_first_leg_a["total_cooperations"],
-                "total_defections": stats_first_leg_a["total_defections"],
-                "cooperate_after_opponent_cooperate": stats_first_leg_a["cooperate_after_opponent_cooperate"],
-                "defect_after_opponent_cooperate": stats_first_leg_a["defect_after_opponent_cooperate"],
-                "cooperate_after_opponent_defect": stats_first_leg_a["cooperate_after_opponent_defect"],
-                "defect_after_opponent_defect": stats_first_leg_a["defect_after_opponent_defect"],
-            })
-
-            # Record IDA row (agent_b perspective)
-            results.append({
-                "pairing_id": pairing_id,
-                "leg": "first_leg",
-                "num_rounds": result_first_leg.num_rounds,
-                "agent_name": agent_b_name,
-                "opponent_name": agent_a_name,
-                "points_scored": result_first_leg.agent_b_score,
-                "opponent_points": result_first_leg.agent_a_score,
-                "first_move_cooperate": stats_first_leg_b["first_move_cooperate"],
-                "total_cooperations": stats_first_leg_b["total_cooperations"],
-                "total_defections": stats_first_leg_b["total_defections"],
-                "cooperate_after_opponent_cooperate": stats_first_leg_b["cooperate_after_opponent_cooperate"],
-                "defect_after_opponent_cooperate": stats_first_leg_b["defect_after_opponent_cooperate"],
-                "cooperate_after_opponent_defect": stats_first_leg_b["cooperate_after_opponent_defect"],
-                "defect_after_opponent_defect": stats_first_leg_b["defect_after_opponent_defect"],
-            })
-
-            # Record VUELTA row (agent_b perspective, now Player 1)
-            results.append({
-                "pairing_id": pairing_id,
-                "leg": "second_leg",
-                "num_rounds": result_second_leg.num_rounds,
-                "agent_name": agent_b_name,
-                "opponent_name": agent_a_name,
-                "points_scored": result_second_leg.agent_a_score,
-                "opponent_points": result_second_leg.agent_b_score,
-                "first_move_cooperate": stats_second_leg_a["first_move_cooperate"],
-                "total_cooperations": stats_second_leg_a["total_cooperations"],
-                "total_defections": stats_second_leg_a["total_defections"],
-                "cooperate_after_opponent_cooperate": stats_second_leg_a["cooperate_after_opponent_cooperate"],
-                "defect_after_opponent_cooperate": stats_second_leg_a["defect_after_opponent_cooperate"],
-                "cooperate_after_opponent_defect": stats_second_leg_a["cooperate_after_opponent_defect"],
-                "defect_after_opponent_defect": stats_second_leg_a["defect_after_opponent_defect"],
-            })
-
-            # Record VUELTA row (agent_a perspective, now Player 2)
-            results.append({
-                "pairing_id": pairing_id,
-                "leg": "second_leg",
-                "num_rounds": result_second_leg.num_rounds,
-                "agent_name": agent_a_name,
-                "opponent_name": agent_b_name,
-                "points_scored": result_second_leg.agent_b_score,
-                "opponent_points": result_second_leg.agent_a_score,
-                "first_move_cooperate": stats_second_leg_b["first_move_cooperate"],
-                "total_cooperations": stats_second_leg_b["total_cooperations"],
-                "total_defections": stats_second_leg_b["total_defections"],
-                "cooperate_after_opponent_cooperate": stats_second_leg_b["cooperate_after_opponent_cooperate"],
-                "defect_after_opponent_cooperate": stats_second_leg_b["defect_after_opponent_cooperate"],
-                "cooperate_after_opponent_defect": stats_second_leg_b["cooperate_after_opponent_defect"],
-                "defect_after_opponent_defect": stats_second_leg_b["defect_after_opponent_defect"],
-            })
-
-            pairing_id += 1
-
-            if args.verbose:
-                print("Done")
+        if args.verbose:
+            print("Done")
 
     # Write CSV
     if results:
@@ -305,11 +252,11 @@ Examples:
             writer.writeheader()
             writer.writerows(results)
 
-    print(f"\nTournament complete!")
-    print(f"  Agents: {len(agents)}")
-    print(f"  Pairings: {pairing_id}")
-    print(f"  Results rows: {len(results)}")
-    print(f"  Output: {output_path}")
+    print(f"\n{GREEN}Tournament complete!{RESET}")
+    print(f"  {WHITE}Agents: {len(agents)}{RESET}")
+    print(f"  {WHITE}Unique pairings: {len(pairings)}{RESET}")
+    print(f"  {WHITE}Results rows: {len(results)}{RESET}")
+    print(f"  {WHITE}Output: {output_path}{RESET}")
 
 
 if __name__ == "__main__":
