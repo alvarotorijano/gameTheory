@@ -182,111 +182,111 @@ Examples:
                 print(f"[{current_pairing}/{total_pairings}] {agent_a_name} vs {agent_b_name}...", end=" ", flush=True)
 
             # Determine rounds for this leg
-            num_rounds_ida = get_effective_rounds(None) if args.unknown_horizon else num_rounds
-            num_rounds_vuelta = get_effective_rounds(None) if args.unknown_horizon else num_rounds
+            num_rounds_first_leg = get_effective_rounds(None) if args.unknown_horizon else num_rounds
+            num_rounds_second_leg = get_effective_rounds(None) if args.unknown_horizon else num_rounds
 
             # IDA
-            agent_a_ida = agents[agent_a_name](num_rounds=(None if args.unknown_horizon else num_rounds_ida))
-            agent_b_ida = agents[agent_b_name](num_rounds=(None if args.unknown_horizon else num_rounds_ida))
+            agent_a_first_leg = agents[agent_a_name](num_rounds=(None if args.unknown_horizon else num_rounds_first_leg))
+            agent_b_first_leg = agents[agent_b_name](num_rounds=(None if args.unknown_horizon else num_rounds_first_leg))
 
-            result_ida = run_leg(
-                agent_a_ida,
-                agent_b_ida,
-                num_rounds_ida,
+            result_first_leg = run_leg(
+                agent_a_first_leg,
+                agent_b_first_leg,
+                num_rounds_first_leg,
                 agent_a_name=agent_a_name,
                 agent_b_name=agent_b_name,
                 verbose=False,
             )
 
-            stats_ida_a = calculate_statistics(result_ida.agent_a_history, result_ida.agent_b_history)
-            stats_ida_b = calculate_statistics(result_ida.agent_b_history, result_ida.agent_a_history)
+            stats_first_leg_a = calculate_statistics(result_first_leg.agent_a_history, result_first_leg.agent_b_history)
+            stats_first_leg_b = calculate_statistics(result_first_leg.agent_b_history, result_first_leg.agent_a_history)
 
             # VUELTA
-            agent_a_vuelta = agents[agent_a_name](num_rounds=(None if args.unknown_horizon else num_rounds_vuelta))
-            agent_b_vuelta = agents[agent_b_name](num_rounds=(None if args.unknown_horizon else num_rounds_vuelta))
+            agent_a_second_leg = agents[agent_a_name](num_rounds=(None if args.unknown_horizon else num_rounds_second_leg))
+            agent_b_second_leg = agents[agent_b_name](num_rounds=(None if args.unknown_horizon else num_rounds_second_leg))
 
-            result_vuelta = run_leg(
-                agent_b_vuelta,
-                agent_a_vuelta,
-                num_rounds_vuelta,
+            result_second_leg = run_leg(
+                agent_b_second_leg,
+                agent_a_second_leg,
+                num_rounds_second_leg,
                 agent_a_name=agent_b_name,
                 agent_b_name=agent_a_name,
                 verbose=False,
             )
 
-            stats_vuelta_a = calculate_statistics(result_vuelta.agent_a_history, result_vuelta.agent_b_history)
-            stats_vuelta_b = calculate_statistics(result_vuelta.agent_b_history, result_vuelta.agent_a_history)
+            stats_second_leg_a = calculate_statistics(result_second_leg.agent_a_history, result_second_leg.agent_b_history)
+            stats_second_leg_b = calculate_statistics(result_second_leg.agent_b_history, result_second_leg.agent_a_history)
 
             # Record IDA row (agent_a perspective)
             results.append({
                 "pairing_id": pairing_id,
-                "leg": "ida",
-                "num_rounds": result_ida.num_rounds,
+                "leg": "first_leg",
+                "num_rounds": result_first_leg.num_rounds,
                 "agent_name": agent_a_name,
                 "opponent_name": agent_b_name,
-                "points_scored": result_ida.agent_a_score,
-                "opponent_points": result_ida.agent_b_score,
-                "first_move_cooperate": stats_ida_a["first_move_cooperate"],
-                "total_cooperations": stats_ida_a["total_cooperations"],
-                "total_defections": stats_ida_a["total_defections"],
-                "cooperate_after_opponent_cooperate": stats_ida_a["cooperate_after_opponent_cooperate"],
-                "defect_after_opponent_cooperate": stats_ida_a["defect_after_opponent_cooperate"],
-                "cooperate_after_opponent_defect": stats_ida_a["cooperate_after_opponent_defect"],
-                "defect_after_opponent_defect": stats_ida_a["defect_after_opponent_defect"],
+                "points_scored": result_first_leg.agent_a_score,
+                "opponent_points": result_first_leg.agent_b_score,
+                "first_move_cooperate": stats_first_leg_a["first_move_cooperate"],
+                "total_cooperations": stats_first_leg_a["total_cooperations"],
+                "total_defections": stats_first_leg_a["total_defections"],
+                "cooperate_after_opponent_cooperate": stats_first_leg_a["cooperate_after_opponent_cooperate"],
+                "defect_after_opponent_cooperate": stats_first_leg_a["defect_after_opponent_cooperate"],
+                "cooperate_after_opponent_defect": stats_first_leg_a["cooperate_after_opponent_defect"],
+                "defect_after_opponent_defect": stats_first_leg_a["defect_after_opponent_defect"],
             })
 
             # Record IDA row (agent_b perspective)
             results.append({
                 "pairing_id": pairing_id,
-                "leg": "ida",
-                "num_rounds": result_ida.num_rounds,
+                "leg": "first_leg",
+                "num_rounds": result_first_leg.num_rounds,
                 "agent_name": agent_b_name,
                 "opponent_name": agent_a_name,
-                "points_scored": result_ida.agent_b_score,
-                "opponent_points": result_ida.agent_a_score,
-                "first_move_cooperate": stats_ida_b["first_move_cooperate"],
-                "total_cooperations": stats_ida_b["total_cooperations"],
-                "total_defections": stats_ida_b["total_defections"],
-                "cooperate_after_opponent_cooperate": stats_ida_b["cooperate_after_opponent_cooperate"],
-                "defect_after_opponent_cooperate": stats_ida_b["defect_after_opponent_cooperate"],
-                "cooperate_after_opponent_defect": stats_ida_b["cooperate_after_opponent_defect"],
-                "defect_after_opponent_defect": stats_ida_b["defect_after_opponent_defect"],
+                "points_scored": result_first_leg.agent_b_score,
+                "opponent_points": result_first_leg.agent_a_score,
+                "first_move_cooperate": stats_first_leg_b["first_move_cooperate"],
+                "total_cooperations": stats_first_leg_b["total_cooperations"],
+                "total_defections": stats_first_leg_b["total_defections"],
+                "cooperate_after_opponent_cooperate": stats_first_leg_b["cooperate_after_opponent_cooperate"],
+                "defect_after_opponent_cooperate": stats_first_leg_b["defect_after_opponent_cooperate"],
+                "cooperate_after_opponent_defect": stats_first_leg_b["cooperate_after_opponent_defect"],
+                "defect_after_opponent_defect": stats_first_leg_b["defect_after_opponent_defect"],
             })
 
             # Record VUELTA row (agent_b perspective, now Player 1)
             results.append({
                 "pairing_id": pairing_id,
-                "leg": "vuelta",
-                "num_rounds": result_vuelta.num_rounds,
+                "leg": "second_leg",
+                "num_rounds": result_second_leg.num_rounds,
                 "agent_name": agent_b_name,
                 "opponent_name": agent_a_name,
-                "points_scored": result_vuelta.agent_a_score,
-                "opponent_points": result_vuelta.agent_b_score,
-                "first_move_cooperate": stats_vuelta_a["first_move_cooperate"],
-                "total_cooperations": stats_vuelta_a["total_cooperations"],
-                "total_defections": stats_vuelta_a["total_defections"],
-                "cooperate_after_opponent_cooperate": stats_vuelta_a["cooperate_after_opponent_cooperate"],
-                "defect_after_opponent_cooperate": stats_vuelta_a["defect_after_opponent_cooperate"],
-                "cooperate_after_opponent_defect": stats_vuelta_a["cooperate_after_opponent_defect"],
-                "defect_after_opponent_defect": stats_vuelta_a["defect_after_opponent_defect"],
+                "points_scored": result_second_leg.agent_a_score,
+                "opponent_points": result_second_leg.agent_b_score,
+                "first_move_cooperate": stats_second_leg_a["first_move_cooperate"],
+                "total_cooperations": stats_second_leg_a["total_cooperations"],
+                "total_defections": stats_second_leg_a["total_defections"],
+                "cooperate_after_opponent_cooperate": stats_second_leg_a["cooperate_after_opponent_cooperate"],
+                "defect_after_opponent_cooperate": stats_second_leg_a["defect_after_opponent_cooperate"],
+                "cooperate_after_opponent_defect": stats_second_leg_a["cooperate_after_opponent_defect"],
+                "defect_after_opponent_defect": stats_second_leg_a["defect_after_opponent_defect"],
             })
 
             # Record VUELTA row (agent_a perspective, now Player 2)
             results.append({
                 "pairing_id": pairing_id,
-                "leg": "vuelta",
-                "num_rounds": result_vuelta.num_rounds,
+                "leg": "second_leg",
+                "num_rounds": result_second_leg.num_rounds,
                 "agent_name": agent_a_name,
                 "opponent_name": agent_b_name,
-                "points_scored": result_vuelta.agent_b_score,
-                "opponent_points": result_vuelta.agent_a_score,
-                "first_move_cooperate": stats_vuelta_b["first_move_cooperate"],
-                "total_cooperations": stats_vuelta_b["total_cooperations"],
-                "total_defections": stats_vuelta_b["total_defections"],
-                "cooperate_after_opponent_cooperate": stats_vuelta_b["cooperate_after_opponent_cooperate"],
-                "defect_after_opponent_cooperate": stats_vuelta_b["defect_after_opponent_cooperate"],
-                "cooperate_after_opponent_defect": stats_vuelta_b["cooperate_after_opponent_defect"],
-                "defect_after_opponent_defect": stats_vuelta_b["defect_after_opponent_defect"],
+                "points_scored": result_second_leg.agent_b_score,
+                "opponent_points": result_second_leg.agent_a_score,
+                "first_move_cooperate": stats_second_leg_b["first_move_cooperate"],
+                "total_cooperations": stats_second_leg_b["total_cooperations"],
+                "total_defections": stats_second_leg_b["total_defections"],
+                "cooperate_after_opponent_cooperate": stats_second_leg_b["cooperate_after_opponent_cooperate"],
+                "defect_after_opponent_cooperate": stats_second_leg_b["defect_after_opponent_cooperate"],
+                "cooperate_after_opponent_defect": stats_second_leg_b["cooperate_after_opponent_defect"],
+                "defect_after_opponent_defect": stats_second_leg_b["defect_after_opponent_defect"],
             })
 
             pairing_id += 1

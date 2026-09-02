@@ -16,7 +16,7 @@ utils/
 │   ├── agent_loader.py    # Agent discovery (AST-based)
 │   └── README.md          # Library documentation
 │
-├── match_runner/          # Play two agents (ida + vuelta)
+├── match_runner/          # Play two agents (first leg + second leg)
 │   ├── run_match.py       # CLI script
 │   └── README.md          # Usage instructions
 │
@@ -48,7 +48,7 @@ Each tool has its own folder with a Python script and README:
 ```bash
 python match_runner/run_match.py <agent_a> <agent_b> [--rounds N] [--unknown-horizon]
 ```
-Play two agents against each other, show ida/vuelta/average results.
+Play two agents against each other, show first leg/second leg/average results.
 
 ### Tournament Runner
 ```bash

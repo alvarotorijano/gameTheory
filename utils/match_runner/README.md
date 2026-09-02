@@ -15,6 +15,7 @@ python utils/match_runner/run_match.py <agent_a> <agent_b> [OPTIONS]
 - `--rounds N` — Number of rounds per leg (default: 100 from config.json)
 - `--unknown-horizon` — Use unknown horizon (agents see `num_rounds=None`, actual rounds randomized)
 - `--verbose` — Print each round's result
+- `--visualize` — Show live replay of moves with delays (great for learning how agents play)
 
 ## Examples
 
@@ -38,31 +39,37 @@ python utils/match_runner/run_match.py copycat_agent random_agent --unknown-hori
 python utils/match_runner/run_match.py copycat_agent random_agent --rounds 10 --verbose
 ```
 
+### Live Visualization (see moves in real-time)
+```bash
+python utils/match_runner/run_match.py copycat_agent random_agent --visualize --rounds 10
+```
+Shows each move with a 0.8 second delay between rounds. Cooperation shown in green, defection in red.
+
 ## Output
 
 The script displays:
 
-1. **IDA Results** — Agent A vs Agent B (A as Player 1)
-2. **VUELTA Results** — Agent B vs Agent A (B as Player 1)
+1. **FIRST LEG Results** — Agent A vs Agent B (A as Player 1)
+2. **SECOND LEG Results** — Agent B vs Agent A (B as Player 1)
 3. **SUMMARY** — Average scores and winner
 
 Example output:
 ```
 ============================================================
-IDA: copycat_agent (Player 1) vs random_agent (Player 2)
+FIRST LEG: copycat_agent (Player 1) vs random_agent (Player 2)
 Rounds: 100
 ============================================================
 
-IDA Results:
+FIRST LEG Results:
   copycat_agent: 250 points
   random_agent: 150 points
 
 ============================================================
-VUELTA: random_agent (Player 1) vs copycat_agent (Player 2)
+SECOND LEG: random_agent (Player 1) vs copycat_agent (Player 2)
 Rounds: 100
 ============================================================
 
-VUELTA Results:
+SECOND LEG Results:
   random_agent: 160 points
   copycat_agent: 240 points
 

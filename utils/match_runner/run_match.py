@@ -6,6 +6,7 @@ CLI tool to execute a complete match (two legs) between two agents and display r
 
 import argparse
 import sys
+import time
 from pathlib import Path
 
 # ANSI color codes
@@ -42,6 +43,34 @@ except ImportError as e:
     sys.exit(1)
 
 
+def visualize_leg(agent_a_name: str, agent_b_name: str, agent_a_moves: list, agent_b_moves: list, delay: float = 0.8):
+    """
+    Visualize a leg move-by-move with delays between rounds.
+
+    Parameters:
+        agent_a_name: Name of first agent.
+        agent_b_name: Name of second agent.
+        agent_a_moves: List of moves for agent A.
+        agent_b_moves: List of moves for agent B.
+        delay: Delay in seconds between rounds.
+    """
+    print(f"\n{GREEN}Live replay:{RESET}\n")
+
+    for round_num, (move_a, move_b) in enumerate(zip(agent_a_moves, agent_b_moves), start=1):
+        # Move display
+        move_a_display = "COOPERATE" if move_a == "C" else "DEFECT"
+        move_b_display = "COOPERATE" if move_b == "C" else "DEFECT"
+
+        # Color based on move (green for cooperation, red for defection)
+        move_a_color = GREEN if move_a == "C" else RED
+        move_b_color = GREEN if move_b == "C" else RED
+
+        print(f"  Round {round_num}: {agent_a_name} → {move_a_color}{move_a_display}{RESET}  |  {agent_b_name} → {move_b_color}{move_b_display}{RESET}")
+        time.sleep(delay)
+
+    print()
+
+
 def main():
     """
     Main entry point for match runner.
@@ -49,18 +78,19 @@ def main():
     Parses command-line arguments, discovers agents, runs both legs, and displays results.
     """
     parser = argparse.ArgumentParser(
-        description="Play two agents in the Iterated Prisoner's Dilemma (ida + vuelta)",
+        description="Play two agents in the Iterated Prisoner's Dilemma (first leg + second leg)",
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog="""
 Examples:
-  python run_match.py copycat_agent random_agent --rounds 50
-  python run_match.py copycat_agent random_agent --unknown-horizon
-  python run_match.py my_agent opponent_agent
+  python utils/match_runner/run_match.py copycat_agent random_agent --rounds 50
+  python utils/match_runner/run_match.py copycat_agent random_agent --unknown-horizon
+  python utils/match_runner/run_match.py copycat_agent random_agent --visualize --rounds 10
+  python utils/match_runner/run_match.py my_agent opponent_agent
         """,
     )
 
-    parser.add_argument("agent_a", help="Name of first agent (Player 1 in ida)")
-    parser.add_argument("agent_b", help="Name of second agent (Player 2 in ida)")
+    parser.add_argument("agent_a", help="Name of first agent (Player 1 in first leg)")
+    parser.add_argument("agent_b", help="Name of second agent (Player 2 in first leg)")
     parser.add_argument(
         "--rounds",
         type=int,
@@ -75,21 +105,24 @@ Examples:
     parser.add_argument(
         "--verbose", action="store_true", help="Print each round's result"
     )
+    parser.add_argument(
+        "--visualize", action="store_true", help="Show each move with delay (visual mode)"
+    )
 
     args = parser.parse_args()
 
     # Determine effective rounds
     config = get_config()
     if args.unknown_horizon:
-        num_rounds_ida = get_effective_rounds(None)
-        num_rounds_vuelta = get_effective_rounds(None)
+        num_rounds_first_leg = get_effective_rounds(None)
+        num_rounds_second_leg = get_effective_rounds(None)
         print(f"{YELLOW}[Unknown Horizon Mode]{RESET}")
-        print(f"{WHITE}  First Leg will run: {num_rounds_ida} rounds")
-        print(f"  Second Leg will run: {num_rounds_vuelta} rounds{RESET}")
+        print(f"{WHITE}  First Leg will run: {num_rounds_first_leg} rounds")
+        print(f"  Second Leg will run: {num_rounds_second_leg} rounds{RESET}")
         print()
     else:
-        num_rounds_ida = args.rounds or config.default_rounds
-        num_rounds_vuelta = num_rounds_ida
+        num_rounds_first_leg = args.rounds or config.default_rounds
+        num_rounds_second_leg = num_rounds_first_leg
 
     # Discover agents
     agents_dir = project_root / "agents"
@@ -130,54 +163,61 @@ Examples:
     # Run First Leg (A vs B)
     print(f"{'='*60}")
     print(f"FIRST LEG: {args.agent_a} (Player 1) vs {args.agent_b} (Player 2)")
-    print(f"Rounds: {num_rounds_ida}")
+    print(f"Rounds: {num_rounds_first_leg}")
     print(f"{'='*60}")
 
-    agent_a_ida = agents[args.agent_a](num_rounds=(None if args.unknown_horizon else num_rounds_ida))
-    agent_b_ida = agents[args.agent_b](num_rounds=(None if args.unknown_horizon else num_rounds_ida))
+    agent_a_first_leg = agents[args.agent_a](num_rounds=(None if args.unknown_horizon else num_rounds_first_leg))
+    agent_b_first_leg = agents[args.agent_b](num_rounds=(None if args.unknown_horizon else num_rounds_first_leg))
 
-    result_ida = run_leg(
-        agent_a_ida,
-        agent_b_ida,
-        num_rounds_ida,
+    result_first_leg = run_leg(
+        agent_a_first_leg,
+        agent_b_first_leg,
+        num_rounds_first_leg,
         agent_a_name=args.agent_a,
         agent_b_name=args.agent_b,
         verbose=args.verbose,
     )
 
-    print(f"\nIDA Results:")
-    print(f"  {args.agent_a}: {result_ida.agent_a_score} points")
-    print(f"  {args.agent_b}: {result_ida.agent_b_score} points")
+    print(f"\nFIRST LEG Results:")
+    print(f"  {args.agent_a}: {result_first_leg.agent_a_score} points")
+    print(f"  {args.agent_b}: {result_first_leg.agent_b_score} points")
     print()
+
+    if args.visualize:
+        visualize_leg(args.agent_a, args.agent_b, result_first_leg.agent_a_history, result_first_leg.agent_b_history)
 
     # Run Second Leg (B vs A)
     print(f"{'='*60}")
     print(f"SECOND LEG: {args.agent_b} (Player 1) vs {args.agent_a} (Player 2)")
-    print(f"Rounds: {num_rounds_vuelta}")
+    print(f"Rounds: {num_rounds_second_leg}")
     print(f"{'='*60}")
 
-    agent_a_vuelta = agents[args.agent_a](num_rounds=(None if args.unknown_horizon else num_rounds_vuelta))
-    agent_b_vuelta = agents[args.agent_b](num_rounds=(None if args.unknown_horizon else num_rounds_vuelta))
+    agent_a_second_leg = agents[args.agent_a](num_rounds=(None if args.unknown_horizon else num_rounds_second_leg))
+    agent_b_second_leg = agents[args.agent_b](num_rounds=(None if args.unknown_horizon else num_rounds_second_leg))
 
-    result_vuelta = run_leg(
-        agent_b_vuelta,
-        agent_a_vuelta,
-        num_rounds_vuelta,
+    result_second_leg = run_leg(
+        agent_b_second_leg,
+        agent_a_second_leg,
+        num_rounds_second_leg,
         agent_a_name=args.agent_b,
         agent_b_name=args.agent_a,
         verbose=args.verbose,
     )
 
     print(f"\nSECOND LEG Results:")
-    print(f"  {args.agent_b}: {result_vuelta.agent_a_score} points")
-    print(f"  {args.agent_a}: {result_vuelta.agent_b_score} points")
+    print(f"  {args.agent_b}: {result_second_leg.agent_a_score} points")
+    print(f"  {args.agent_a}: {result_second_leg.agent_b_score} points")
     print()
 
+    if args.visualize:
+        # Note: In second leg, roles are reversed, so agent_b's moves are in agent_a_history
+        visualize_leg(args.agent_b, args.agent_a, result_second_leg.agent_a_history, result_second_leg.agent_b_history)
+
     # Calculate averages
-    total_first_leg_a = result_ida.agent_a_score
-    total_first_leg_b = result_ida.agent_b_score
-    total_second_leg_a = result_vuelta.agent_b_score  # Note: roles reversed in second leg
-    total_second_leg_b = result_vuelta.agent_a_score
+    total_first_leg_a = result_first_leg.agent_a_score
+    total_first_leg_b = result_first_leg.agent_b_score
+    total_second_leg_a = result_second_leg.agent_b_score  # Note: roles reversed in second leg
+    total_second_leg_b = result_second_leg.agent_a_score
 
     avg_a = (total_first_leg_a + total_second_leg_a) / 2
     avg_b = (total_first_leg_b + total_second_leg_b) / 2
