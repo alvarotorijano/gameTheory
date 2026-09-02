@@ -11,6 +11,13 @@ import subprocess
 import sys
 from pathlib import Path
 
+# ANSI color codes
+RED = "\033[91m"
+GREEN = "\033[92m"
+YELLOW = "\033[93m"
+WHITE = "\033[97m"
+RESET = "\033[0m"
+
 # Calculate project root from this script's location
 script_dir = Path(__file__).resolve().parent
 project_root = script_dir.parent.parent
@@ -19,15 +26,15 @@ sys.path.insert(0, str(project_root))
 try:
     from utils.game_core import discover_agents
 except ImportError as e:
-    print("❌ Error: Could not import game core modules.", file=sys.stderr)
-    print(f"   Details: {e}", file=sys.stderr)
-    print(f"\n📍 Project root: {project_root}", file=sys.stderr)
-    print(f"   Expected location: {project_root}/utils/game_core/", file=sys.stderr)
-    print("\n✅ Verify that utils/game_core/ contains:", file=sys.stderr)
-    print("   - agent_base.py", file=sys.stderr)
-    print("   - agent_loader.py", file=sys.stderr)
-    print("   - engine.py", file=sys.stderr)
-    print("   - payoff.py", file=sys.stderr)
+    print(f"{RED}Error: Could not import game core modules.{RESET}", file=sys.stderr)
+    print(f"{WHITE}   Details: {e}{RESET}", file=sys.stderr)
+    print(f"\n{YELLOW}Project root: {project_root}{RESET}", file=sys.stderr)
+    print(f"{WHITE}   Expected location: {project_root}/utils/game_core/{RESET}", file=sys.stderr)
+    print(f"\n{YELLOW}Verify that utils/game_core/ contains:{RESET}", file=sys.stderr)
+    print(f"{WHITE}   - agent_base.py", file=sys.stderr)
+    print(f"   - agent_loader.py", file=sys.stderr)
+    print(f"   - engine.py", file=sys.stderr)
+    print(f"   - payoff.py{RESET}", file=sys.stderr)
     sys.exit(1)
 
 

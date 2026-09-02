@@ -8,6 +8,13 @@ import argparse
 import sys
 from pathlib import Path
 
+# ANSI color codes
+RED = "\033[91m"
+GREEN = "\033[92m"
+YELLOW = "\033[93m"
+WHITE = "\033[97m"
+RESET = "\033[0m"
+
 # Calculate project root from this script's location
 script_dir = Path(__file__).resolve().parent
 project_root = script_dir.parent.parent
@@ -23,15 +30,15 @@ try:
         run_leg,
     )
 except ImportError as e:
-    print("❌ Error: Could not import game core modules.", file=sys.stderr)
-    print(f"   Details: {e}", file=sys.stderr)
-    print(f"\n📍 Project root: {project_root}", file=sys.stderr)
-    print(f"   Expected location: {project_root}/utils/game_core/", file=sys.stderr)
-    print("\n✅ Verify that utils/game_core/ contains:", file=sys.stderr)
-    print("   - agent_base.py", file=sys.stderr)
-    print("   - agent_loader.py", file=sys.stderr)
-    print("   - engine.py", file=sys.stderr)
-    print("   - payoff.py", file=sys.stderr)
+    print(f"{RED}Error: Could not import game core modules.{RESET}", file=sys.stderr)
+    print(f"{WHITE}   Details: {e}{RESET}", file=sys.stderr)
+    print(f"\n{YELLOW}Project root: {project_root}{RESET}", file=sys.stderr)
+    print(f"{WHITE}   Expected location: {project_root}/utils/game_core/{RESET}", file=sys.stderr)
+    print(f"\n{YELLOW}Verify that utils/game_core/ contains:{RESET}", file=sys.stderr)
+    print(f"{WHITE}   - agent_base.py", file=sys.stderr)
+    print(f"   - agent_loader.py", file=sys.stderr)
+    print(f"   - engine.py", file=sys.stderr)
+    print(f"   - payoff.py{RESET}", file=sys.stderr)
     sys.exit(1)
 
 
@@ -76,9 +83,9 @@ Examples:
     if args.unknown_horizon:
         num_rounds_ida = get_effective_rounds(None)
         num_rounds_vuelta = get_effective_rounds(None)
-        print(f"[Unknown Horizon Mode]")
-        print(f"  Ida will run: {num_rounds_ida} rounds")
-        print(f"  Vuelta will run: {num_rounds_vuelta} rounds")
+        print(f"{YELLOW}[Unknown Horizon Mode]{RESET}")
+        print(f"{WHITE}  First Leg will run: {num_rounds_ida} rounds")
+        print(f"  Second Leg will run: {num_rounds_vuelta} rounds{RESET}")
         print()
     else:
         num_rounds_ida = args.rounds or config.default_rounds
@@ -88,21 +95,21 @@ Examples:
     agents_dir = project_root / "agents"
 
     if not agents_dir.exists():
-        print(f"❌ Error: Agents directory not found.", file=sys.stderr)
-        print(f"   Expected at: {agents_dir}", file=sys.stderr)
+        print(f"{RED}Error: Agents directory not found.{RESET}", file=sys.stderr)
+        print(f"{WHITE}   Expected at: {agents_dir}{RESET}", file=sys.stderr)
         sys.exit(1)
 
     agents = discover_agents(agents_dir)
 
     if not agents:
-        print(f"❌ Error: No agents found in {agents_dir}", file=sys.stderr)
-        print(f"\n📍 Make sure agents are placed in:", file=sys.stderr)
-        print(f"   {agents_dir}/", file=sys.stderr)
-        print(f"\n✅ Expected structure:", file=sys.stderr)
-        print(f"   agents/", file=sys.stderr)
+        print(f"{RED}Error: No agents found in {agents_dir}{RESET}", file=sys.stderr)
+        print(f"\n{YELLOW}Make sure agents are placed in:{RESET}", file=sys.stderr)
+        print(f"{WHITE}   {agents_dir}/{RESET}", file=sys.stderr)
+        print(f"\n{YELLOW}Expected structure:{RESET}", file=sys.stderr)
+        print(f"{WHITE}   agents/", file=sys.stderr)
         print(f"   ├── random_agent/", file=sys.stderr)
         print(f"   ├── copycat_agent/", file=sys.stderr)
-        print(f"   └── <your_agent>/", file=sys.stderr)
+        print(f"   └── <your_agent>/{RESET}", file=sys.stderr)
         sys.exit(1)
 
     # Check if requested agents exist
@@ -113,11 +120,11 @@ Examples:
         missing_agents.append(args.agent_b)
 
     if missing_agents:
-        print(f"❌ Error: Agent(s) not found: {', '.join(missing_agents)}", file=sys.stderr)
-        print(f"\n📍 Searched in: {agents_dir}", file=sys.stderr)
-        print(f"\n✅ Available agents ({len(agents)} found):", file=sys.stderr)
+        print(f"{RED}Error: Agent(s) not found: {', '.join(missing_agents)}{RESET}", file=sys.stderr)
+        print(f"\n{YELLOW}Searched in: {agents_dir}{RESET}", file=sys.stderr)
+        print(f"\n{GREEN}Available agents ({len(agents)} found):{RESET}", file=sys.stderr)
         for agent_name in sorted(agents.keys()):
-            print(f"   - {agent_name}", file=sys.stderr)
+            print(f"{WHITE}   - {agent_name}{RESET}", file=sys.stderr)
         sys.exit(1)
 
     # Run First Leg (A vs B)
