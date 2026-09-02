@@ -8,7 +8,7 @@ course project. These rules override any default behavior and must be followed e
 - **Never commit or reference absolute/local machine paths** in any project file.
 - **Always use relative paths** from the project root.
 - Example ✅: `./utils/game_core/agent_base.py`, `docs/game_rules.md`
-- Example ❌: `c:\Users\The_menda14\Desktop\ICAI\gameTheory\utils\game_core\agent_base.py`
+- Example ❌: `/home/user/projects/gameTheory/utils/...` or `C:\Users\...\gameTheory\...`
 - This ensures the project is portable and works on any machine/environment.
 
 ## Code & Documentation Language

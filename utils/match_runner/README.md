@@ -1,11 +1,13 @@
 # Match Runner
 
-Play two agents against each other in the Iterated Prisoner's Dilemma (ida + vuelta).
+Play two agents against each other in the Iterated Prisoner's Dilemma (first leg + second leg).
 
 ## Usage
 
+**Run from the project root directory:**
+
 ```bash
-python run_match.py <agent_a> <agent_b> [OPTIONS]
+python utils/match_runner/run_match.py <agent_a> <agent_b> [OPTIONS]
 ```
 
 ## Options
@@ -18,22 +20,22 @@ python run_match.py <agent_a> <agent_b> [OPTIONS]
 
 ### Basic Match (100 rounds)
 ```bash
-python run_match.py copycat_agent random_agent
+python utils/match_runner/run_match.py copycat_agent random_agent
 ```
 
 ### Custom Round Count
 ```bash
-python run_match.py copycat_agent second_chance_agent --rounds 50
+python utils/match_runner/run_match.py copycat_agent second_chance_agent --rounds 50
 ```
 
 ### Unknown Horizon
 ```bash
-python run_match.py copycat_agent random_agent --unknown-horizon
+python utils/match_runner/run_match.py copycat_agent random_agent --unknown-horizon
 ```
 
 ### Verbose Output (see each round)
 ```bash
-python run_match.py copycat_agent random_agent --rounds 10 --verbose
+python utils/match_runner/run_match.py copycat_agent random_agent --rounds 10 --verbose
 ```
 
 ## Output

@@ -11,14 +11,31 @@ import sys
 from pathlib import Path
 from typing import List
 
-from utils.game_core import (
-    COOPERATE,
-    DEFECT,
-    discover_agents,
-    get_config,
-    get_effective_rounds,
-    run_leg,
-)
+# Calculate project root from this script's location
+script_dir = Path(__file__).resolve().parent
+project_root = script_dir.parent.parent
+sys.path.insert(0, str(project_root))
+
+try:
+    from utils.game_core import (
+        COOPERATE,
+        DEFECT,
+        discover_agents,
+        get_config,
+        get_effective_rounds,
+        run_leg,
+    )
+except ImportError as e:
+    print("❌ Error: Could not import game core modules.", file=sys.stderr)
+    print(f"   Details: {e}", file=sys.stderr)
+    print(f"\n📍 Project root: {project_root}", file=sys.stderr)
+    print(f"   Expected location: {project_root}/utils/game_core/", file=sys.stderr)
+    print("\n✅ Verify that utils/game_core/ contains:", file=sys.stderr)
+    print("   - agent_base.py", file=sys.stderr)
+    print("   - agent_loader.py", file=sys.stderr)
+    print("   - engine.py", file=sys.stderr)
+    print("   - payoff.py", file=sys.stderr)
+    sys.exit(1)
 
 
 def calculate_statistics(agent_history: List[str], opponent_history: List[str]):

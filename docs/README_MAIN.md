@@ -198,7 +198,7 @@ python utils/agent_collector/collect_agents.py --sources sources.json [--dry-run
   },
   {
     "student": "maria_lopez",
-    "source": "/local/path/to/maria_agent.py"
+    "source": "./submissions/maria_agent.py"
   }
 ]
 ```

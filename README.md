@@ -38,9 +38,14 @@ For detailed pyenv setup instructions, see [`docs/installation.md`](docs/install
 
 ### Step 3: Run Your First Match
 
-The project comes with three example agents. Let's watch them compete:
+The project comes with three example agents. Let's watch them compete.
+
+**Important:** Always run commands from the **project root directory** (where you see `README.md`):
 
 ```bash
+# Make sure you're in the right directory
+pwd  # or 'cd' if you're elsewhere
+# Then run:
 python utils/match_runner/run_match.py copycat_agent random_agent --rounds 50
 ```
 

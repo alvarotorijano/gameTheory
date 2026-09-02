@@ -18,7 +18,7 @@ This document summarizes the improvements made to the project documentation and 
 - Fixed in `DOCUMENTATION_PHASE_SUMMARY.md` (removed absolute path reference)
 
 **Guideline:**
-- ❌ Never use: `c:\Users\The_menda14\Desktop\ICAI\gameTheory\utils\...`
+- ❌ Never use: `/home/user/projects/gameTheory/utils/...` or `C:\Users\...\gameTheory\...`
 - ✅ Always use: `./utils/game_core/agent_base.py` or relative paths from project root
 
 ---
@@ -63,19 +63,31 @@ This document summarizes the improvements made to the project documentation and 
 
 ---
 
-### 3. ✅ All Documentation Moved to `docs/` Folder
+### 3. ✅ Documentation Organized Across Root and `docs/` Folders
 
-**What:** Moved all documentation files from project root to `docs/` for cleaner organization.
+**What:** Organized documentation files with key entry points in root and detailed docs in `docs/`.
 
-**Files Moved:**
-- `README.md` → `docs/README_MAIN.md`
-- `CLAUDE.md` → `docs/CLAUDE.md`
-- `CHECKLIST.md` → `docs/CHECKLIST.md`
-- `DOCUMENTATION_PHASE_SUMMARY.md` → `docs/DOCUMENTATION_PHASE_SUMMARY.md`
-- `IMPROVEMENTS_SUMMARY.md` → `docs/IMPROVEMENTS_SUMMARY.md`
+**Entry Points in Root (Quick Access):**
+- `README.md` — Main project entry point (quick start guide)
+- `CLAUDE.md` — Project rules and constraints (reference document)
 
-**Files Still in Root (Configuration, not documentation):**
-- `config.json` — Game parameters
+**Detailed Documentation in `docs/` Folder:**
+- `README_MAIN.md` — Comprehensive project overview
+- `README.md` — Documentation index
+- `requirements.md` — Technical specifications
+- `prompts.md` — Historical record of all user prompts
+- `implementation_plan.md` — Implementation blueprint
+- `game_rules.md` — Game mechanics explanation
+- `architecture.md` — Technical design
+- `student_guide.md` — How to write an agent
+- `installation.md` — Python setup guide
+- `CHECKLIST.md` — Completion checklist
+- `DOCUMENTATION_PHASE_SUMMARY.md` — Documentation phase summary
+- `IMPROVEMENTS_SUMMARY.md` — This file
+- `original_prompt.md` — Spanish prompt (archive)
+
+**Technical Configuration Files in Root:**
+- `config.json` — Game parameters (editable)
 - `requirements.txt` — Python dependencies
 - `.gitignore` — Git configuration
 

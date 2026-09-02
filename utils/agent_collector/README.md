@@ -13,8 +13,10 @@ When students submit their agents via git repos or files, Agent Collector:
 
 ## Usage
 
+**Run from the project root directory:**
+
 ```bash
-python collect_agents.py --sources <JSON_FILE> [OPTIONS]
+python utils/agent_collector/collect_agents.py --sources <JSON_FILE> [OPTIONS]
 ```
 
 ## Options
@@ -48,7 +50,7 @@ Create a JSON file with an array of student submissions:
 
 ### Dry Run (preview without importing)
 ```bash
-python collect_agents.py --sources sources.json --dry-run
+python utils/agent_collector/collect_agents.py --sources sources.json --dry-run
 ```
 
 Output:
@@ -70,7 +72,7 @@ Collection complete!
 
 ### Actual Import
 ```bash
-python collect_agents.py --sources sources.json
+python utils/agent_collector/collect_agents.py --sources sources.json
 ```
 
 ## Agent Discovery
@@ -114,8 +116,8 @@ For git repositories, Collector caches clones in `._cache/` to avoid re-download
 Once agents are imported, use Tournament Runner to include them:
 
 ```bash
-python collect_agents.py --sources sources.json
-python ../tournament_runner/run_tournament.py
+python utils/agent_collector/collect_agents.py --sources sources.json
+python utils/tournament_runner/run_tournament.py
 ```
 
 The tournament will automatically discover and include all imported agents.

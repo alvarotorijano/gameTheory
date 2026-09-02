@@ -1,5 +1,5 @@
 """
-Match Runner: Play two agents against each other (ida + vuelta).
+Match Runner: Play two agents against each other (first leg + second leg).
 
 CLI tool to execute a complete match (two legs) between two agents and display results.
 """
@@ -8,14 +8,31 @@ import argparse
 import sys
 from pathlib import Path
 
-from utils.game_core import (
-    COOPERATE,
-    DEFECT,
-    discover_agents,
-    get_config,
-    get_effective_rounds,
-    run_leg,
-)
+# Calculate project root from this script's location
+script_dir = Path(__file__).resolve().parent
+project_root = script_dir.parent.parent
+sys.path.insert(0, str(project_root))
+
+try:
+    from utils.game_core import (
+        COOPERATE,
+        DEFECT,
+        discover_agents,
+        get_config,
+        get_effective_rounds,
+        run_leg,
+    )
+except ImportError as e:
+    print("❌ Error: Could not import game core modules.", file=sys.stderr)
+    print(f"   Details: {e}", file=sys.stderr)
+    print(f"\n📍 Project root: {project_root}", file=sys.stderr)
+    print(f"   Expected location: {project_root}/utils/game_core/", file=sys.stderr)
+    print("\n✅ Verify that utils/game_core/ contains:", file=sys.stderr)
+    print("   - agent_base.py", file=sys.stderr)
+    print("   - agent_loader.py", file=sys.stderr)
+    print("   - engine.py", file=sys.stderr)
+    print("   - payoff.py", file=sys.stderr)
+    sys.exit(1)
 
 
 def main():
@@ -68,19 +85,37 @@ Examples:
         num_rounds_vuelta = num_rounds_ida
 
     # Discover agents
-    agents_dir = Path(__file__).parent.parent.parent / "agents"
-    agents = discover_agents(agents_dir)
+    agents_dir = project_root / "agents"
 
-    if args.agent_a not in agents:
-        print(f"❌ Error: Agent '{args.agent_a}' does not exist.", file=sys.stderr)
-        print(f"\n✅ Available agents:", file=sys.stderr)
-        for agent_name in sorted(agents.keys()):
-            print(f"   - {agent_name}", file=sys.stderr)
+    if not agents_dir.exists():
+        print(f"❌ Error: Agents directory not found.", file=sys.stderr)
+        print(f"   Expected at: {agents_dir}", file=sys.stderr)
         sys.exit(1)
 
+    agents = discover_agents(agents_dir)
+
+    if not agents:
+        print(f"❌ Error: No agents found in {agents_dir}", file=sys.stderr)
+        print(f"\n📍 Make sure agents are placed in:", file=sys.stderr)
+        print(f"   {agents_dir}/", file=sys.stderr)
+        print(f"\n✅ Expected structure:", file=sys.stderr)
+        print(f"   agents/", file=sys.stderr)
+        print(f"   ├── random_agent/", file=sys.stderr)
+        print(f"   ├── copycat_agent/", file=sys.stderr)
+        print(f"   └── <your_agent>/", file=sys.stderr)
+        sys.exit(1)
+
+    # Check if requested agents exist
+    missing_agents = []
+    if args.agent_a not in agents:
+        missing_agents.append(args.agent_a)
     if args.agent_b not in agents:
-        print(f"❌ Error: Agent '{args.agent_b}' does not exist.", file=sys.stderr)
-        print(f"\n✅ Available agents:", file=sys.stderr)
+        missing_agents.append(args.agent_b)
+
+    if missing_agents:
+        print(f"❌ Error: Agent(s) not found: {', '.join(missing_agents)}", file=sys.stderr)
+        print(f"\n📍 Searched in: {agents_dir}", file=sys.stderr)
+        print(f"\n✅ Available agents ({len(agents)} found):", file=sys.stderr)
         for agent_name in sorted(agents.keys()):
             print(f"   - {agent_name}", file=sys.stderr)
         sys.exit(1)

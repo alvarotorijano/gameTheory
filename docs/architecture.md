@@ -276,7 +276,7 @@ python collect_agents.py --sources sources.json [--dry-run]
   },
   {
     "student": "maria_lopez",
-    "source": "/home/professor/submissions/maria_agent.py"
+    "source": "./submissions/maria_agent.py"
   }
 ]
 ```

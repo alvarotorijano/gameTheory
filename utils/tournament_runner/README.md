@@ -4,8 +4,10 @@ Execute a complete round-robin tournament with all discovered agents.
 
 ## Usage
 
+**Run from the project root directory:**
+
 ```bash
-python run_tournament.py [OPTIONS]
+python utils/tournament_runner/run_tournament.py [OPTIONS]
 ```
 
 ## Options
@@ -20,44 +22,44 @@ python run_tournament.py [OPTIONS]
 
 ### Default Tournament (100 rounds, all agents)
 ```bash
-python run_tournament.py
+python utils/tournament_runner/run_tournament.py
 ```
 
 ### Custom Rounds
 ```bash
-python run_tournament.py --rounds 50
+python utils/tournament_runner/run_tournament.py --rounds 50
 ```
 
 ### Unknown Horizon
 ```bash
-python run_tournament.py --unknown-horizon
+python utils/tournament_runner/run_tournament.py --unknown-horizon
 ```
 
 ### No Self-Play (agents don't play themselves)
 ```bash
-python run_tournament.py --no-self-play
+python utils/tournament_runner/run_tournament.py --no-self-play
 ```
 
 ### Verbose Output (see progress)
 ```bash
-python run_tournament.py --verbose
+python utils/tournament_runner/run_tournament.py --verbose
 ```
 
 ### Custom Output File
 ```bash
-python run_tournament.py --output results/tournament_custom.csv
+python utils/tournament_runner/run_tournament.py --output results/tournament_custom.csv
 ```
 
 ## Output CSV
 
-Generates a CSV with one row per agent per leg (ida/vuelta).
+Generates a CSV with one row per agent per leg (first leg/second leg).
 
 **Columns:**
 
 | Column | Type | Meaning |
 |---|---|---|
-| `pairing_id` | int | Groups ida+vuelta pairs together |
-| `leg` | str | `"ida"` or `"vuelta"` |
+| `pairing_id` | int | Groups first leg+second leg pairs together |
+| `leg` | str | `"first_leg"` or `"second_leg"` |
 | `num_rounds` | int | Rounds played that leg |
 | `agent_name` | str | Agent this row describes |
 | `opponent_name` | str | Opponent agent |
@@ -75,10 +77,10 @@ Generates a CSV with one row per agent per leg (ida/vuelta).
 
 ```
 pairing_id,leg,num_rounds,agent_name,opponent_name,points_scored,opponent_points,first_move_cooperate,total_cooperations,total_defections,...
-0,ida,100,random_agent,copycat_agent,150,250,true,51,49,...
-0,ida,100,copycat_agent,random_agent,250,150,true,99,1,...
-0,vuelta,100,copycat_agent,random_agent,240,160,true,98,2,...
-0,vuelta,100,random_agent,copycat_agent,160,240,false,48,52,...
+0,first_leg,100,random_agent,copycat_agent,150,250,true,51,49,...
+0,first_leg,100,copycat_agent,random_agent,250,150,true,99,1,...
+0,second_leg,100,copycat_agent,random_agent,240,160,true,98,2,...
+0,second_leg,100,random_agent,copycat_agent,160,240,false,48,52,...
 ```
 
 ## Analysis
