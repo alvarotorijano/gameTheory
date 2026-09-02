@@ -1,0 +1,14 @@
+[
+  {
+    "student": "example_student_1",
+    "source": "https://github.com/example_student_1/prisoner-dilemma-agent.git"
+  },
+  {
+    "student": "example_student_2",
+    "source": "https://github.com/example_student_2/my_strategy.git"
+  },
+  {
+    "student": "example_student_3",
+    "source": "/path/to/local/submissions/example_student_3_agent.py"
+  }
+]

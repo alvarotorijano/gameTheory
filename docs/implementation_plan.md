@@ -181,7 +181,7 @@ match).
 ```json
 [
   {"student": "juan_perez", "source": "https://github.com/.../pd-agent.git"},
-  {"student": "maria_lopez", "source": "C:/entregas/maria_agent.py"}
+  {"student": "maria_lopez", "source": "./submissions/maria_agent.py"}
 ]
 ```
 

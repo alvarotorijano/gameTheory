@@ -38,8 +38,7 @@ agents/
 Open `agents/copycat_agent/agent.py` and read it carefully:
 
 ```python
-from utils.game_core.agent_base import Agent
-from utils.game_core.moves import COOPERATE, DEFECT
+from utils.game_core import Agent, COOPERATE, DEFECT
 
 class CopycatAgent(Agent):
     """
@@ -85,8 +84,7 @@ Edit `my_strategy/agent.py`:
 ### Example: Simple Tit-for-Tat with Forgiveness
 
 ```python
-from utils.game_core.agent_base import Agent
-from utils.game_core.moves import COOPERATE, DEFECT
+from utils.game_core import Agent, COOPERATE, DEFECT
 
 class MyForgiveStrategy(Agent):
     """

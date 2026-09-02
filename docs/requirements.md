@@ -170,7 +170,7 @@ Each agent's `README.md` must include:
 ```json
 [
   {"student": "name", "source": "https://github.com/...git"},
-  {"student": "name", "source": "/local/path/file.py"}
+  {"student": "name", "source": "./submissions/agent_file.py"}
 ]
 ```
 

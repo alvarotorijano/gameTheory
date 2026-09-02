@@ -8,7 +8,7 @@ course project. These rules override any default behavior and must be followed e
 - **Never commit or reference absolute/local machine paths** in any project file.
 - **Always use relative paths** from the project root.
 - Example ✅: `./utils/game_core/agent_base.py`, `docs/game_rules.md`
-- Example ❌: `c:\Users\The_menda14\Desktop\ICAI\gameTheory\utils\game_core\agent_base.py`
+- Example ❌: `/home/user/projects/gameTheory/utils/...` or `C:\Users\...\gameTheory\...`
 - This ensures the project is portable and works on any machine/environment.
 
 ## Code & Documentation Language
@@ -112,6 +112,43 @@ Keep docstrings **concise and complete**. One or two sentences for the descripti
 - Provide `--help` with clear usage examples.
 - Exit with status code 0 on success, 1 on error.
 - Print results to stdout; errors to stderr.
+
+### Terminal Output & Color Codes
+
+All CLI scripts must use ANSI color codes for terminal output to improve readability and guide users:
+
+**Define color constants at the top of each script:**
+```python
+RED = "\033[91m"      # Errors and critical issues
+GREEN = "\033[92m"    # Success messages and positive information
+YELLOW = "\033[93m"   # Warnings and important information (project paths, etc.)
+WHITE = "\033[97m"    # Neutral information and details
+RESET = "\033[0m"     # Reset to default terminal color
+```
+
+**Usage Guidelines:**
+- **Red (Errors):** `f"{RED}Error: {message}{RESET}"` for errors and failures
+- **Green (Success):** `f"{GREEN}Available agents (3 found):{RESET}"` for positive outcomes
+- **Yellow (Warnings):** `f"{YELLOW}Project root: {path}{RESET}"` for important paths/info
+- **White (Info):** `f"{WHITE}   - agent_name{RESET}"` for listing details
+- Always include `{RESET}` at the end of colored sections to avoid color bleed
+
+**Examples:**
+```python
+# Error message
+print(f"{RED}Error: Agent '{agent}' not found.{RESET}", file=sys.stderr)
+
+# Success message
+print(f"{GREEN}Tournament complete!{RESET}")
+
+# Warning with path info
+print(f"{YELLOW}Searched in: {agents_dir}{RESET}", file=sys.stderr)
+
+# Neutral details
+print(f"{WHITE}   - copycat_agent{RESET}", file=sys.stderr)
+```
+
+Never use emojis (❌, ✅, 📍, etc.) in terminal output — use colors instead.
 
 ### CSV Output
 

@@ -23,16 +23,16 @@ This is configurable in `config.json`:
 }
 ```
 
-## Match Structure: Ida and Vuelta
+## Match Structure: First Leg and Second Leg
 
 A complete match between two agents consists of **two legs**:
 
-### Ida (First Leg)
+### First Leg (First Leg)
 - **Agent A** is designated **Player 1**.
 - **Agent B** is designated **Player 2**.
 - They play for a fixed number of rounds.
 
-### Vuelta (Second Leg)
+### Second Leg (Second Leg)
 - **Agent B** is designated **Player 1**.
 - **Agent A** is designated **Player 2**.
 - The roles reverse, but the agents are the same.
@@ -46,13 +46,13 @@ matters). By playing both "A vs B" and "B vs A," we fairly account for any such 
 and compute a more representative average score for each agent.
 
 ### Example
-If Agent A scores 150 total points in Ida and Agent B scores 50, then:
-- A's Ida score: 150
-- B's Ida score: 50
+If Agent A scores 150 total points in First Leg and Agent B scores 50, then:
+- A's First Leg score: 150
+- B's First Leg score: 50
 
-Then in Vuelta, the roles swap:
-- B's Vuelta score: 120 (as Player 1 this time)
-- A's Vuelta score: 80 (as Player 2 this time)
+Then in Second Leg, the roles swap:
+- B's Second Leg score: 120 (as Player 1 this time)
+- A's Second Leg score: 80 (as Player 2 this time)
 
 Final averages:
 - A: (150 + 80) / 2 = 115 average
@@ -125,7 +125,7 @@ In `config.json`:
 ## Tournament Structure
 
 The **Tournament Runner** plays every agent against every other agent in the discovery set:
-- For each pair of agents (A, B), it runs both Ida (A vs B) and Vuelta (B vs A).
+- For each pair of agents (A, B), it runs both First Leg (A vs B) and Second Leg (B vs A).
 - By default, agents also play against themselves (self-play enabled).
 - Results are recorded in a CSV with one row per `(agent, leg)`.
 
@@ -136,7 +136,7 @@ legs (each agent pair, both orderings, both legs).
 
 ## Scoring Summary for a Match
 
-After Ida and Vuelta, the instructor examines:
+After First Leg and Second Leg, the instructor examines:
 1. **Points per leg** (how many points each agent scored in each leg).
 2. **Average points** across both legs (which agent won the match overall).
 3. **Statistical columns** (cooperations, defections, conditional behavior), which reveal

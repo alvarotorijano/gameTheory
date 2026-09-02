@@ -76,14 +76,51 @@ Guarda este prompt junto al primero en otro archivo llamado prompts. Cada prompt
 
 ---
 
+## Prompt 3: Implementation Phase & Core Library (2026-09-01)
+
+### Language: Spanish
+
+ok, procede con la implementacion. Iremos paso a paso de tal forma que pueda ir commiteando cada cosa por separado. 
+Revisa el checklist porque veo algunos puntos del core project setup que ya han sido llevadoa cabo. El resto de proyectos ni si
+
+### Intent
+
+User approved starting the implementation phase. Emphasis on:
+1. Step-by-step implementation with separate commits per phase
+2. Verification of completed documentation phase items
+3. Begin Phase 1: Core Library
+
+---
+
+## Prompt 4: Phase 1 Complete - Beginning Phase 2 (2026-09-01)
+
+### Language: Spanish
+
+ok, explicame un poco que has implementado. Veo un agent base que actua a modo de clase abstracta y exige al programador implementar los metodos de play e init. Porque tenemos el discover agents mezclado con esto en el archivo __init__.py?
+
+Continuamos con el paso 2, example agents. Veo que no estas actualizando el archivo de prompts. Tienes que hacerlo para que los alumnos puedan ver como se ha ido contruyendo el proyuecto a base de IA. Ahora quiero que hagas los 3 ejemplos que pedí en el prompt inicial. A saber: Uno que juegue aleatorio, otro que replique las jugadas del contrincante y otro que no coopere soolo si recibe dos no-cooperaciones del contrincante.
+
+### Intent
+
+User requests:
+1. Clarification on Phase 1 architecture (Agent base class, discover_agents function placement)
+2. Update prompts.md with all prompts to show AI-driven development progression
+3. Begin Phase 2: Create three example agents:
+   - **random_agent** — random move strategy
+   - **copycat_agent** — tit-for-tat (replicate opponent's last move)
+   - **second_chance_agent** — forgive first defection, retaliate on second defection, then forgive again
+
+---
+
 ## Intent & Summary
 
 **Prompt 1** establishes the complete specification for an Iterated Prisoner's Dilemma tournament platform for student programming assignments.
 
-**Prompt 2** adds:
-1. A constraint: never use absolute/local machine paths; always use relative paths within the project
-2. A documentation reorganization: separate CLAUDE.md (project rules/styles) from requirements.md (technical specs)
-3. A record-keeping requirement: save all future prompts in a dedicated `prompts.md` file
+**Prompt 2** adds path constraints and documentation reorganization, with requirement to save all prompts.
+
+**Prompt 3** initiates implementation phase with step-by-step, committable approach.
+
+**Prompt 4** requests Phase 1 clarification, prompt file updates, and Phase 2 agent implementation.
 
 ---
 
@@ -93,6 +130,6 @@ When adding new prompts to this file:
 1. Include the timestamp (date)
 2. Specify the language
 3. Preserve the prompt verbatim
-4. Add a brief summary of intent below each prompt
+4. Add a brief "Intent" section describing what the user requested
 
-This file serves as a historical record of project evolution and requirements changes.
+This file serves as a historical record of project evolution and requirements changes, demonstrating how the project was built iteratively with AI assistance.
