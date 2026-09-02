@@ -12,8 +12,8 @@ python utils/match_runner/run_match.py <agent_a> <agent_b> [OPTIONS]
 
 ## Options
 
-- `--rounds N` — Number of rounds per leg (default: 100 from config.json)
-- `--unknown-horizon` — Use unknown horizon (agents see `num_rounds=None`, actual rounds randomized)
+- `--rounds N` — Number of rounds per leg **(required)**
+- `--unknown-horizon` — Agents don't know the round count (cannot plan strategy ahead)
 - `--verbose` — Print each round's result
 - `--visualize` — Show live replay of moves with delays (great for learning how agents play)
 
@@ -29,9 +29,9 @@ python utils/match_runner/run_match.py copycat_agent random_agent
 python utils/match_runner/run_match.py copycat_agent second_chance_agent --rounds 50
 ```
 
-### Unknown Horizon
+### Unknown Horizon (agents don't know how many rounds)
 ```bash
-python utils/match_runner/run_match.py copycat_agent random_agent --unknown-horizon
+python utils/match_runner/run_match.py copycat_agent random_agent --rounds 50 --unknown-horizon
 ```
 
 ### Verbose Output (see each round)

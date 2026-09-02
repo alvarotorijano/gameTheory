@@ -12,27 +12,27 @@ python utils/tournament_runner/run_tournament.py [OPTIONS]
 
 ## Options
 
-- `--rounds N` — Rounds per leg (default: 100 from config.json)
-- `--unknown-horizon` — Use unknown horizon (random rounds per leg)
+- `--rounds N` — Rounds per leg **(required)**
+- `--unknown-horizon` — Agents don't know the round count (cannot plan strategy ahead)
 - `--no-self-play` — Exclude self-play matches
 - `--output FILE` — Output CSV file (default: `results/tournament.csv`)
 - `--verbose` — Show progress information
 
 ## Examples
 
-### Default Tournament (100 rounds, all agents)
+### Tournament with 100 rounds per leg
 ```bash
-python utils/tournament_runner/run_tournament.py
+python utils/tournament_runner/run_tournament.py --rounds 100
 ```
 
-### Custom Rounds
+### Tournament with 50 rounds
 ```bash
 python utils/tournament_runner/run_tournament.py --rounds 50
 ```
 
-### Unknown Horizon
+### Tournament with unknown horizon (agents don't know round count)
 ```bash
-python utils/tournament_runner/run_tournament.py --unknown-horizon
+python utils/tournament_runner/run_tournament.py --rounds 100 --unknown-horizon
 ```
 
 ### No Self-Play (agents don't play themselves)

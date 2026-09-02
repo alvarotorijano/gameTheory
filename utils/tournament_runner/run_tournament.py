@@ -114,13 +114,13 @@ Examples:
     parser.add_argument(
         "--rounds",
         type=int,
-        default=None,
-        help="Number of rounds per leg (default: from config.json)",
+        required=True,
+        help="Number of rounds per leg (required)",
     )
     parser.add_argument(
         "--unknown-horizon",
         action="store_true",
-        help="Use unknown horizon (random rounds per leg)",
+        help="Agents don't know the round count (cannot plan strategy)",
     )
     parser.add_argument(
         "--no-self-play",
@@ -161,7 +161,7 @@ Examples:
 
     # Get configuration
     config = get_config()
-    num_rounds = args.rounds or config.default_rounds
+    num_rounds = args.rounds
 
     # Run tournament
     results = []
@@ -181,13 +181,16 @@ Examples:
             if args.verbose:
                 print(f"[{current_pairing}/{total_pairings}] {agent_a_name} vs {agent_b_name}...", end=" ", flush=True)
 
-            # Determine rounds for this leg
-            num_rounds_first_leg = get_effective_rounds(None) if args.unknown_horizon else num_rounds
-            num_rounds_second_leg = get_effective_rounds(None) if args.unknown_horizon else num_rounds
+            # Engine always plays the specified number of rounds
+            num_rounds_first_leg = num_rounds
+            num_rounds_second_leg = num_rounds
 
-            # IDA
-            agent_a_first_leg = agents[agent_a_name](num_rounds=(None if args.unknown_horizon else num_rounds_first_leg))
-            agent_b_first_leg = agents[agent_b_name](num_rounds=(None if args.unknown_horizon else num_rounds_first_leg))
+            # Agents get num_rounds only if horizon is known
+            agent_rounds = None if args.unknown_horizon else num_rounds
+
+            # FIRST LEG
+            agent_a_first_leg = agents[agent_a_name](num_rounds=agent_rounds)
+            agent_b_first_leg = agents[agent_b_name](num_rounds=agent_rounds)
 
             result_first_leg = run_leg(
                 agent_a_first_leg,
@@ -201,9 +204,9 @@ Examples:
             stats_first_leg_a = calculate_statistics(result_first_leg.agent_a_history, result_first_leg.agent_b_history)
             stats_first_leg_b = calculate_statistics(result_first_leg.agent_b_history, result_first_leg.agent_a_history)
 
-            # VUELTA
-            agent_a_second_leg = agents[agent_a_name](num_rounds=(None if args.unknown_horizon else num_rounds_second_leg))
-            agent_b_second_leg = agents[agent_b_name](num_rounds=(None if args.unknown_horizon else num_rounds_second_leg))
+            # SECOND LEG
+            agent_a_second_leg = agents[agent_a_name](num_rounds=agent_rounds)
+            agent_b_second_leg = agents[agent_b_name](num_rounds=agent_rounds)
 
             result_second_leg = run_leg(
                 agent_b_second_leg,

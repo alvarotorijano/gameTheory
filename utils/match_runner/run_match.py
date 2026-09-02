@@ -83,9 +83,9 @@ def main():
         epilog="""
 Examples:
   python utils/match_runner/run_match.py copycat_agent random_agent --rounds 50
-  python utils/match_runner/run_match.py copycat_agent random_agent --unknown-horizon
-  python utils/match_runner/run_match.py copycat_agent random_agent --visualize --rounds 10
-  python utils/match_runner/run_match.py my_agent opponent_agent
+  python utils/match_runner/run_match.py copycat_agent random_agent --rounds 50 --unknown-horizon
+  python utils/match_runner/run_match.py copycat_agent random_agent --rounds 10 --visualize
+  python utils/match_runner/run_match.py my_agent opponent_agent --rounds 100
         """,
     )
 
@@ -94,8 +94,8 @@ Examples:
     parser.add_argument(
         "--rounds",
         type=int,
-        default=None,
-        help="Number of rounds per leg (default: from config.json)",
+        required=True,
+        help="Number of rounds per leg (required)",
     )
     parser.add_argument(
         "--unknown-horizon",
@@ -112,17 +112,18 @@ Examples:
     args = parser.parse_args()
 
     # Determine effective rounds
-    config = get_config()
+    num_rounds_first_leg = args.rounds
+    num_rounds_second_leg = args.rounds
+
     if args.unknown_horizon:
-        num_rounds_first_leg = get_effective_rounds(None)
-        num_rounds_second_leg = get_effective_rounds(None)
         print(f"{YELLOW}[Unknown Horizon Mode]{RESET}")
-        print(f"{WHITE}  First Leg will run: {num_rounds_first_leg} rounds")
-        print(f"  Second Leg will run: {num_rounds_second_leg} rounds{RESET}")
+        print(f"{WHITE}  Agents will NOT know the round count")
+        print(f"  Engine will play: {num_rounds_first_leg} rounds per leg{RESET}")
         print()
     else:
-        num_rounds_first_leg = args.rounds or config.default_rounds
-        num_rounds_second_leg = num_rounds_first_leg
+        print(f"{YELLOW}[Known Horizon Mode]{RESET}")
+        print(f"{WHITE}  Agents know they will play: {num_rounds_first_leg} rounds per leg{RESET}")
+        print()
 
     # Discover agents
     agents_dir = project_root / "agents"
@@ -166,8 +167,10 @@ Examples:
     print(f"Rounds: {num_rounds_first_leg}")
     print(f"{'='*60}")
 
-    agent_a_first_leg = agents[args.agent_a](num_rounds=(None if args.unknown_horizon else num_rounds_first_leg))
-    agent_b_first_leg = agents[args.agent_b](num_rounds=(None if args.unknown_horizon else num_rounds_first_leg))
+    # Agents get num_rounds only if horizon is known
+    agent_rounds_first_leg = None if args.unknown_horizon else num_rounds_first_leg
+    agent_a_first_leg = agents[args.agent_a](num_rounds=agent_rounds_first_leg)
+    agent_b_first_leg = agents[args.agent_b](num_rounds=agent_rounds_first_leg)
 
     result_first_leg = run_leg(
         agent_a_first_leg,
@@ -192,8 +195,10 @@ Examples:
     print(f"Rounds: {num_rounds_second_leg}")
     print(f"{'='*60}")
 
-    agent_a_second_leg = agents[args.agent_a](num_rounds=(None if args.unknown_horizon else num_rounds_second_leg))
-    agent_b_second_leg = agents[args.agent_b](num_rounds=(None if args.unknown_horizon else num_rounds_second_leg))
+    # Agents get num_rounds only if horizon is known
+    agent_rounds_second_leg = None if args.unknown_horizon else num_rounds_second_leg
+    agent_a_second_leg = agents[args.agent_a](num_rounds=agent_rounds_second_leg)
+    agent_b_second_leg = agents[args.agent_b](num_rounds=agent_rounds_second_leg)
 
     result_second_leg = run_leg(
         agent_b_second_leg,
