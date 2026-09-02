@@ -4,63 +4,84 @@ Execute a complete round-robin tournament with all discovered agents.
 
 ## Usage
 
-**Run from the project root directory:**
+Run from the project root directory:
 
 ```bash
-python utils/tournament_runner/run_tournament.py [OPTIONS]
+python utils/tournament_runner/run_tournament.py --rounds N [OPTIONS]
 ```
 
 ## Options
 
-- `--rounds N` — Rounds per leg (default: 100 from config.json)
-- `--unknown-horizon` — Use unknown horizon (random rounds per leg)
-- `--no-self-play` — Exclude self-play matches
-- `--output FILE` — Output CSV file (default: `results/tournament.csv`)
+- `--rounds N` — Rounds per match **(required)**
+- `--unknown-horizon` — Agents don't know the round count (cannot plan strategy ahead)
+- `--no-self-play` — Exclude self-play matches (agents only play different agents)
+- `--output FILE` — Output CSV file (default: auto-generated with timestamp + flags)
 - `--verbose` — Show progress information
 
 ## Examples
 
-### Default Tournament (100 rounds, all agents)
+### Tournament with 100 rounds per match
 ```bash
-python utils/tournament_runner/run_tournament.py
+python utils/tournament_runner/run_tournament.py --rounds 100
 ```
 
-### Custom Rounds
+### Tournament with unknown horizon (agents don't know round count)
 ```bash
-python utils/tournament_runner/run_tournament.py --rounds 50
+python utils/tournament_runner/run_tournament.py --rounds 100 --unknown-horizon
+# Output: results/tournament_02092026-143120_rounds100_unknown-horizon.csv
 ```
 
-### Unknown Horizon
+### Tournament without self-play
 ```bash
-python utils/tournament_runner/run_tournament.py --unknown-horizon
+python utils/tournament_runner/run_tournament.py --rounds 100 --no-self-play
+# Output: results/tournament_02092026-143135_rounds100_no-self-play.csv
 ```
 
-### No Self-Play (agents don't play themselves)
+### Verbose output with multiple flags
 ```bash
-python utils/tournament_runner/run_tournament.py --no-self-play
+python utils/tournament_runner/run_tournament.py --rounds 50 --unknown-horizon --no-self-play --verbose
+# Output: results/tournament_02092026-143150_rounds50_unknown-horizon_no-self-play.csv
 ```
 
-### Verbose Output (see progress)
+### Custom output filename
 ```bash
-python utils/tournament_runner/run_tournament.py --verbose
+python utils/tournament_runner/run_tournament.py --rounds 100 --output results/my_tournament.csv
+# Output: results/my_tournament.csv
 ```
 
-### Custom Output File
+## Output File
+
+### Auto-Generated Filenames
+
+By default, tournament results are saved with a timestamp and flags in the filename:
+
+**Format:** `tournament_DDMMYYYY-HHMMSS_<flags>.csv`
+
+**Examples:**
+- `tournament_02092026-143052_rounds100.csv` — 100 rounds, known horizon, with self-play
+- `tournament_02092026-143105_rounds50_unknown-horizon.csv` — 50 rounds, unknown horizon
+- `tournament_02092026-143120_rounds100_no-self-play.csv` — 100 rounds, no self-play
+- `tournament_02092026-143135_rounds50_unknown-horizon_no-self-play.csv` — All flags combined
+
+This allows **multiple tournaments to run without overwriting** previous results.
+
+### Custom Filename
+
+To use a custom filename instead:
 ```bash
-python utils/tournament_runner/run_tournament.py --output results/tournament_custom.csv
+python utils/tournament_runner/run_tournament.py --rounds 100 --output results/my_custom_name.csv
 ```
 
 ## Output CSV
 
-Generates a CSV with one row per agent per leg (first leg/second leg).
+Generates a CSV with one row per agent per match (two rows per unique pairing: one for each agent's perspective).
 
 **Columns:**
 
 | Column | Type | Meaning |
 |---|---|---|
-| `pairing_id` | int | Groups first leg+second leg pairs together |
-| `leg` | str | `"first_leg"` or `"second_leg"` |
-| `num_rounds` | int | Rounds played that leg |
+| `pairing_id` | int | Unique identifier for this match |
+| `num_rounds` | int | Rounds played in this match |
 | `agent_name` | str | Agent this row describes |
 | `opponent_name` | str | Opponent agent |
 | `points_scored` | int | Points this agent earned |
@@ -68,19 +89,19 @@ Generates a CSV with one row per agent per leg (first leg/second leg).
 | `first_move_cooperate` | bool | True if agent played "C" on round 1 |
 | `total_cooperations` | int | Count of "C" moves |
 | `total_defections` | int | Count of "D" moves |
-| `cooperate_after_opponent_cooperate` | int | Conditional count |
-| `defect_after_opponent_cooperate` | int | Conditional count |
-| `cooperate_after_opponent_defect` | int | Conditional count |
-| `defect_after_opponent_defect` | int | Conditional count |
+| `cooperate_after_opponent_cooperate` | int | Times agent cooperated after opponent cooperated |
+| `defect_after_opponent_cooperate` | int | Times agent defected after opponent cooperated |
+| `cooperate_after_opponent_defect` | int | Times agent cooperated after opponent defected |
+| `defect_after_opponent_defect` | int | Times agent defected after opponent defected |
 
 ## Example Output (CSV)
 
 ```
-pairing_id,leg,num_rounds,agent_name,opponent_name,points_scored,opponent_points,first_move_cooperate,total_cooperations,total_defections,...
-0,first_leg,100,random_agent,copycat_agent,150,250,true,51,49,...
-0,first_leg,100,copycat_agent,random_agent,250,150,true,99,1,...
-0,second_leg,100,copycat_agent,random_agent,240,160,true,98,2,...
-0,second_leg,100,random_agent,copycat_agent,160,240,false,48,52,...
+pairing_id,num_rounds,agent_name,opponent_name,points_scored,opponent_points,first_move_cooperate,total_cooperations,total_defections,...
+0,100,random_agent,copycat_agent,150,250,true,51,49,...
+0,100,copycat_agent,random_agent,250,150,true,99,1,...
+1,100,copycat_agent,second_chance_agent,275,225,true,97,3,...
+1,100,second_chance_agent,copycat_agent,225,275,true,96,4,...
 ```
 
 ## Analysis
@@ -91,14 +112,6 @@ After the tournament completes:
 2. **Sort by `points_scored` (descending)** to see which agents scored most
 3. **Filter by agent name** to see how that agent performed overall
 4. **Compare statistics** (cooperation counts, conditional behavior) to understand strategy differences
-
-### Sample Analysis Query (SQL-like)
-
-```
-SELECT agent_name, AVG(points_scored) as avg_score, COUNT(*) as matches
-GROUP BY agent_name
-ORDER BY avg_score DESC
-```
 
 ## Discovering Agents
 
@@ -123,12 +136,13 @@ agents/
 
 ## Performance Notes
 
-- **With N agents:** N² × 2 total legs (each agent plays each other in both directions)
-- With 3 agents: 18 legs total
-- With 5 agents: 50 legs total
-- With 10 agents: 200 legs total
+- **With N agents and self-play:** N² total matches (each agent plays each other plus itself)
+- **With N agents and no self-play:** N×(N-1)/2 total matches (each unique pairing once)
+- With 3 agents: 9 matches (with self-play) or 3 matches (without)
+- With 5 agents: 25 matches (with self-play) or 10 matches (without)
+- With 10 agents: 100 matches (with self-play) or 45 matches (without)
 
-Each leg runs for `--rounds` iterations (default 100), so total computation time scales quickly.
+Each match runs for `--rounds` iterations, so total computation time scales with N² or N×(N-1)/2.
 
 ## See Also
 

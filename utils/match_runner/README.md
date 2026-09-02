@@ -1,37 +1,32 @@
 # Match Runner
 
-Play two agents against each other in the Iterated Prisoner's Dilemma (first leg + second leg).
+Play two agents against each other in the Iterated Prisoner's Dilemma.
 
 ## Usage
 
-**Run from the project root directory:**
+Run from the project root directory:
 
 ```bash
-python utils/match_runner/run_match.py <agent_a> <agent_b> [OPTIONS]
+python utils/match_runner/run_match.py <agent_a> <agent_b> --rounds N
 ```
 
 ## Options
 
-- `--rounds N` — Number of rounds per leg (default: 100 from config.json)
-- `--unknown-horizon` — Use unknown horizon (agents see `num_rounds=None`, actual rounds randomized)
+- `--rounds N` — Number of rounds **(required)**
+- `--unknown-horizon` — Agents don't know the round count (cannot plan strategy ahead)
 - `--verbose` — Print each round's result
 - `--visualize` — Show live replay of moves with delays (great for learning how agents play)
 
 ## Examples
 
-### Basic Match (100 rounds)
+### Basic Match
 ```bash
-python utils/match_runner/run_match.py copycat_agent random_agent
+python utils/match_runner/run_match.py copycat_agent random_agent --rounds 50
 ```
 
-### Custom Round Count
+### Unknown Horizon (agents don't know how many rounds)
 ```bash
-python utils/match_runner/run_match.py copycat_agent second_chance_agent --rounds 50
-```
-
-### Unknown Horizon
-```bash
-python utils/match_runner/run_match.py copycat_agent random_agent --unknown-horizon
+python utils/match_runner/run_match.py copycat_agent random_agent --rounds 50 --unknown-horizon
 ```
 
 ### Verbose Output (see each round)
@@ -41,63 +36,48 @@ python utils/match_runner/run_match.py copycat_agent random_agent --rounds 10 --
 
 ### Live Visualization (see moves in real-time)
 ```bash
-python utils/match_runner/run_match.py copycat_agent random_agent --visualize --rounds 10
+python utils/match_runner/run_match.py copycat_agent random_agent --rounds 10 --visualize
 ```
+
 Shows each move with a 0.8 second delay between rounds. Cooperation shown in green, defection in red.
 
 ## Output
 
 The script displays:
 
-1. **FIRST LEG Results** — Agent A vs Agent B (A as Player 1)
-2. **SECOND LEG Results** — Agent B vs Agent A (B as Player 1)
-3. **SUMMARY** — Average scores and winner
+1. **Match header** — agent A vs agent B, round count
+2. **Move sequence** (if `--verbose`) — each round's choices
+3. **Live replay** (if `--visualize`) — animated playback with color
+4. **Summary** — final scores and winner
 
 Example output:
 ```
 ============================================================
-FIRST LEG: copycat_agent (Player 1) vs random_agent (Player 2)
-Rounds: 100
+MATCH: copycat_agent vs random_agent
+Rounds: 50
 ============================================================
 
-FIRST LEG Results:
+Results:
   copycat_agent: 250 points
   random_agent: 150 points
-
-============================================================
-SECOND LEG: random_agent (Player 1) vs copycat_agent (Player 2)
-Rounds: 100
-============================================================
-
-SECOND LEG Results:
-  random_agent: 160 points
-  copycat_agent: 240 points
 
 ============================================================
 SUMMARY
 ============================================================
 
-copycat_agent:
-  First Leg:    250 points
-  Second Leg: 240 points
-  Average: 245.0 points
-
-random_agent:
-  First Leg:    150 points
-  Second Leg: 160 points
-  Average: 155.0 points
+copycat_agent: 250 points
+random_agent: 150 points
 
 ============================================================
-RESULT: copycat_agent WINS by 90.0 points on average
+RESULT: copycat_agent WINS by 100 points
 ============================================================
 ```
 
-## What is First Leg/Second Leg?
+## Strategies
 
-- **First Leg (First Leg):** Agent A plays as Player 1, Agent B as Player 2
-- **Second Leg (Second Leg):** Roles reverse — Agent B as Player 1, Agent A as Player 2
-
-This fairness mechanism accounts for any first-mover advantages.
+- **copycat_agent** — Tit-for-tat: cooperate first, then play opponent's last move
+- **random_agent** — Play random moves (50% cooperate, 50% defect)
+- **second_chance_agent** — Forgive first defection, retaliate on the second
 
 ## See Also
 

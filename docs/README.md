@@ -5,7 +5,7 @@ This folder contains all documentation for the Iterated Prisoner's Dilemma cours
 ## Files
 
 ### Project Requirements & Rules
-- **[requirements.md](requirements.md)** — Technical specifications for all components to implement. **Start here for implementation.**
+- **[requirements.md](requirements.md)** — Technical specifications for all components to implement. Start here for implementation.
 - **[prompts.md](prompts.md)** — All user prompts and instructions (historical record, updated as new prompts arrive).
 
 ### Project Management
@@ -13,8 +13,8 @@ This folder contains all documentation for the Iterated Prisoner's Dilemma cours
 - **[original_prompt.md](original_prompt.md)** — The original user prompt in Spanish (historical record).
 
 ### For Students
-- **[student_guide.md](student_guide.md)** — Step-by-step guide to writing your first agent. **Start here if you're a student.**
-- **[game_rules.md](game_rules.md)** — Detailed explanation of the Prisoner's Dilemma payoff matrix, ida/vuelta structure, and tournament rules.
+- **[student_guide.md](student_guide.md)** — Step-by-step guide to writing your first agent. Start here if you're a student.
+- **[game_rules.md](game_rules.md)** — Detailed explanation of the Prisoner's Dilemma payoff matrix, tournament structure, and game rules.
 
 ### For Instructors & Developers
 - **[architecture.md](architecture.md)** — Technical design: folder layout, component descriptions, agent interface, CLI tools, and configuration.
@@ -34,7 +34,7 @@ This folder contains all documentation for the Iterated Prisoner's Dilemma cours
 2. Prepare a `sources.json` with student repository URLs or file paths.
 3. Run: `python utils/agent_collector/collect_agents.py --sources sources.json`
 4. Run: `python utils/tournament_runner/run_tournament.py --verbose`
-5. Open `results/tournament.csv` to analyze performance and statistics.
+5. Open `results/tournament_<timestamp>.csv` to analyze performance and statistics.
 
 ### "I'm a developer and want to understand the system"
 1. Read [implementation_plan.md](implementation_plan.md) for the overall design.
@@ -45,7 +45,7 @@ This folder contains all documentation for the Iterated Prisoner's Dilemma cours
 
 ## Key Concepts
 
-- **Ida & Vuelta:** The two-leg match structure. See [game_rules.md](game_rules.md).
+- **Tournament Structure:** Round-robin tournament where each agent plays every other agent exactly once.
 - **Agent Interface:** All agents inherit from `Agent` and implement `play()`. See [architecture.md](architecture.md).
 - **Tournament CSV:** Detailed statistics per agent per match. Schema in [architecture.md](architecture.md).
 - **Configuration:** Game payoffs and round counts in `config.json` (root). See [architecture.md](architecture.md).

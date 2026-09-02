@@ -1,7 +1,7 @@
 """
-Match Runner: Play two agents against each other (first leg + second leg).
+Match Runner: Play two agents against each other (simultaneous moves).
 
-CLI tool to execute a complete match (two legs) between two agents and display results.
+CLI tool to execute a match between two agents and display results.
 """
 
 import argparse
@@ -78,24 +78,24 @@ def main():
     Parses command-line arguments, discovers agents, runs both legs, and displays results.
     """
     parser = argparse.ArgumentParser(
-        description="Play two agents in the Iterated Prisoner's Dilemma (first leg + second leg)",
+        description="Play two agents in the Iterated Prisoner's Dilemma (simultaneous moves)",
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog="""
 Examples:
   python utils/match_runner/run_match.py copycat_agent random_agent --rounds 50
-  python utils/match_runner/run_match.py copycat_agent random_agent --unknown-horizon
-  python utils/match_runner/run_match.py copycat_agent random_agent --visualize --rounds 10
-  python utils/match_runner/run_match.py my_agent opponent_agent
+  python utils/match_runner/run_match.py copycat_agent random_agent --rounds 50 --unknown-horizon
+  python utils/match_runner/run_match.py copycat_agent random_agent --rounds 10 --visualize
+  python utils/match_runner/run_match.py my_agent opponent_agent --rounds 100
         """,
     )
 
-    parser.add_argument("agent_a", help="Name of first agent (Player 1 in first leg)")
-    parser.add_argument("agent_b", help="Name of second agent (Player 2 in first leg)")
+    parser.add_argument("agent_a", help="Name of first agent")
+    parser.add_argument("agent_b", help="Name of second agent")
     parser.add_argument(
         "--rounds",
         type=int,
-        default=None,
-        help="Number of rounds per leg (default: from config.json)",
+        required=True,
+        help="Number of rounds per leg (required)",
     )
     parser.add_argument(
         "--unknown-horizon",
@@ -112,17 +112,18 @@ Examples:
     args = parser.parse_args()
 
     # Determine effective rounds
-    config = get_config()
+    num_rounds_first_leg = args.rounds
+    num_rounds_second_leg = args.rounds
+
     if args.unknown_horizon:
-        num_rounds_first_leg = get_effective_rounds(None)
-        num_rounds_second_leg = get_effective_rounds(None)
         print(f"{YELLOW}[Unknown Horizon Mode]{RESET}")
-        print(f"{WHITE}  First Leg will run: {num_rounds_first_leg} rounds")
-        print(f"  Second Leg will run: {num_rounds_second_leg} rounds{RESET}")
+        print(f"{WHITE}  Agents will NOT know the round count")
+        print(f"  Engine will play: {num_rounds_first_leg} rounds per leg{RESET}")
         print()
     else:
-        num_rounds_first_leg = args.rounds or config.default_rounds
-        num_rounds_second_leg = num_rounds_first_leg
+        print(f"{YELLOW}[Known Horizon Mode]{RESET}")
+        print(f"{WHITE}  Agents know they will play: {num_rounds_first_leg} rounds per leg{RESET}")
+        print()
 
     # Discover agents
     agents_dir = project_root / "agents"
@@ -160,97 +161,56 @@ Examples:
             print(f"{WHITE}   - {agent_name}{RESET}", file=sys.stderr)
         sys.exit(1)
 
-    # Run First Leg (A vs B)
+    # Run match (agents make simultaneous moves)
     print(f"{'='*60}")
-    print(f"FIRST LEG: {args.agent_a} (Player 1) vs {args.agent_b} (Player 2)")
+    print(f"MATCH: {args.agent_a} vs {args.agent_b}")
     print(f"Rounds: {num_rounds_first_leg}")
     print(f"{'='*60}")
 
-    agent_a_first_leg = agents[args.agent_a](num_rounds=(None if args.unknown_horizon else num_rounds_first_leg))
-    agent_b_first_leg = agents[args.agent_b](num_rounds=(None if args.unknown_horizon else num_rounds_first_leg))
+    # Agents get num_rounds only if horizon is known
+    agent_rounds = None if args.unknown_horizon else num_rounds_first_leg
+    agent_a = agents[args.agent_a](num_rounds=agent_rounds)
+    agent_b = agents[args.agent_b](num_rounds=agent_rounds)
 
-    result_first_leg = run_leg(
-        agent_a_first_leg,
-        agent_b_first_leg,
+    result = run_leg(
+        agent_a,
+        agent_b,
         num_rounds_first_leg,
         agent_a_name=args.agent_a,
         agent_b_name=args.agent_b,
         verbose=args.verbose,
     )
 
-    print(f"\nFIRST LEG Results:")
-    print(f"  {args.agent_a}: {result_first_leg.agent_a_score} points")
-    print(f"  {args.agent_b}: {result_first_leg.agent_b_score} points")
+    print(f"\nResults:")
+    print(f"  {args.agent_a}: {result.agent_a_score} points")
+    print(f"  {args.agent_b}: {result.agent_b_score} points")
     print()
 
     if args.visualize:
-        visualize_leg(args.agent_a, args.agent_b, result_first_leg.agent_a_history, result_first_leg.agent_b_history)
-
-    # Run Second Leg (B vs A)
-    print(f"{'='*60}")
-    print(f"SECOND LEG: {args.agent_b} (Player 1) vs {args.agent_a} (Player 2)")
-    print(f"Rounds: {num_rounds_second_leg}")
-    print(f"{'='*60}")
-
-    agent_a_second_leg = agents[args.agent_a](num_rounds=(None if args.unknown_horizon else num_rounds_second_leg))
-    agent_b_second_leg = agents[args.agent_b](num_rounds=(None if args.unknown_horizon else num_rounds_second_leg))
-
-    result_second_leg = run_leg(
-        agent_b_second_leg,
-        agent_a_second_leg,
-        num_rounds_second_leg,
-        agent_a_name=args.agent_b,
-        agent_b_name=args.agent_a,
-        verbose=args.verbose,
-    )
-
-    print(f"\nSECOND LEG Results:")
-    print(f"  {args.agent_b}: {result_second_leg.agent_a_score} points")
-    print(f"  {args.agent_a}: {result_second_leg.agent_b_score} points")
-    print()
-
-    if args.visualize:
-        # Note: In second leg, roles are reversed, so agent_b's moves are in agent_a_history
-        visualize_leg(args.agent_b, args.agent_a, result_second_leg.agent_a_history, result_second_leg.agent_b_history)
-
-    # Calculate averages
-    total_first_leg_a = result_first_leg.agent_a_score
-    total_first_leg_b = result_first_leg.agent_b_score
-    total_second_leg_a = result_second_leg.agent_b_score  # Note: roles reversed in second leg
-    total_second_leg_b = result_second_leg.agent_a_score
-
-    avg_a = (total_first_leg_a + total_second_leg_a) / 2
-    avg_b = (total_first_leg_b + total_second_leg_b) / 2
+        visualize_leg(args.agent_a, args.agent_b, result.agent_a_history, result.agent_b_history)
 
     # Display summary
     print(f"{'='*60}")
     print(f"SUMMARY")
     print(f"{'='*60}")
-    print(f"\n{args.agent_a}:")
-    print(f"  First Leg:  {total_first_leg_a} points")
-    print(f"  Second Leg: {total_second_leg_a} points")
-    print(f"  Average: {avg_a:.1f} points")
-
-    print(f"\n{args.agent_b}:")
-    print(f"  First Leg:  {total_first_leg_b} points")
-    print(f"  Second Leg: {total_second_leg_b} points")
-    print(f"  Average: {avg_b:.1f} points")
+    print(f"\n{args.agent_a}: {result.agent_a_score} points")
+    print(f"{args.agent_b}: {result.agent_b_score} points")
 
     print(f"\n{'='*60}")
-    if avg_a > avg_b:
+    if result.agent_a_score > result.agent_b_score:
         winner = args.agent_a
-        margin = avg_a - avg_b
-    elif avg_b > avg_a:
+        margin = result.agent_a_score - result.agent_b_score
+    elif result.agent_b_score > result.agent_a_score:
         winner = args.agent_b
-        margin = avg_b - avg_a
+        margin = result.agent_b_score - result.agent_a_score
     else:
         winner = "TIE"
         margin = 0
 
     if winner == "TIE":
-        print(f"RESULT: TIE - Both agents scored {avg_a:.1f} points on average")
+        print(f"RESULT: TIE - Both agents scored {result.agent_a_score} points")
     else:
-        print(f"RESULT: {winner} WINS by {margin:.1f} points on average")
+        print(f"RESULT: {winner} WINS by {margin} points")
     print(f"{'='*60}")
 
 

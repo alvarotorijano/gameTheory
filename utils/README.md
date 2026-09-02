@@ -12,11 +12,11 @@ utils/
 │   ├── moves.py           # Move constants (COOPERATE, DEFECT)
 │   ├── agent_base.py      # Abstract Agent base class
 │   ├── payoff.py          # Payoff scoring logic
-│   ├── engine.py          # Match engine (runs one leg)
+│   ├── engine.py          # Match engine (runs one match)
 │   ├── agent_loader.py    # Agent discovery (AST-based)
 │   └── README.md          # Library documentation
 │
-├── match_runner/          # Play two agents (first leg + second leg)
+├── match_runner/          # Play two agents
 │   ├── run_match.py       # CLI script
 │   └── README.md          # Usage instructions
 │
@@ -46,13 +46,13 @@ Each tool has its own folder with a Python script and README:
 
 ### Match Runner
 ```bash
-python match_runner/run_match.py <agent_a> <agent_b> [--rounds N] [--unknown-horizon]
+python match_runner/run_match.py <agent_a> <agent_b> --rounds N
 ```
-Play two agents against each other, show first leg/second leg/average results.
+Play two agents against each other and show results.
 
 ### Tournament Runner
 ```bash
-python tournament_runner/run_tournament.py [--rounds N] [--no-self-play]
+python tournament_runner/run_tournament.py --rounds N [--no-self-play]
 ```
 Run round-robin tournament with all agents, output CSV.
 
@@ -64,9 +64,9 @@ Import student agents from repos or files.
 
 ## Implementation Status
 
-- [ ] `game_core/` — To be implemented
-- [ ] `match_runner/` — To be implemented
-- [ ] `tournament_runner/` — To be implemented
+- [x] `game_core/` — Implemented
+- [x] `match_runner/` — Implemented
+- [x] `tournament_runner/` — Implemented
 - [ ] `agent_collector/` — To be implemented
 
-See [`../docs/requirements.md`](../docs/requirements.md) for complete specifications.
+See [../docs/requirements.md](../docs/requirements.md) for complete specifications.
