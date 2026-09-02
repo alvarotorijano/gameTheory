@@ -47,3 +47,6 @@ sources_*.json                   # Variant source lists
 .coverage
 htmlcov/
 .pytest_cache/
+
+# Output Logs
+results/*.csv
