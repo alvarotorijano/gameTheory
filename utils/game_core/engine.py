@@ -8,6 +8,10 @@ import random
 from dataclasses import dataclass, field
 from typing import List
 
+# ANSI color codes
+WHITE = "\033[97m"
+RESET = "\033[0m"
+
 from .agent_base import Agent
 from .moves import COOPERATE, DEFECT
 from .payoff import score_round, get_config
@@ -81,7 +85,7 @@ def run_leg(
         agent_b_history.append(move_b)
 
         if verbose:
-            print(f"Round {round_num + 1}: {agent_a_name}={move_a} {agent_b_name}={move_b} | Points: {points_a}, {points_b}")
+            print(f"{WHITE}Round {round_num + 1}: {agent_a_name}={move_a} {agent_b_name}={move_b} | Points: {points_a}, {points_b}{RESET}")
 
     result = MatchResult(
         agent_a_name=agent_a_name,

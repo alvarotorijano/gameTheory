@@ -9,6 +9,11 @@ import importlib.util
 from pathlib import Path
 from typing import Dict, Type
 
+# ANSI color codes
+YELLOW = "\033[93m"
+RED = "\033[91m"
+RESET = "\033[0m"
+
 from .agent_base import Agent
 
 
@@ -49,7 +54,7 @@ def discover_agents(agents_dir: str | Path) -> Dict[str, Type[Agent]]:
                 if loaded_class:
                     agents[agent_name] = loaded_class
         except Exception as e:
-            print(f"Warning: Failed to load agent from {agent_folder}: {e}")
+            print(f"{YELLOW}Warning: Failed to load agent from {agent_folder}: {e}{RESET}")
 
     return agents
 
@@ -83,7 +88,7 @@ def _find_agent_classes_in_file(file_path: Path) -> list[str]:
                         class_names.append(node.name)
                         break
     except SyntaxError as e:
-        print(f"Syntax error in {file_path}: {e}")
+        print(f"{RED}Syntax error in {file_path}: {e}{RESET}")
 
     return class_names
 
@@ -111,6 +116,6 @@ def _load_agent_class(file_path: Path, class_name: str) -> Type[Agent] | None:
         if issubclass(agent_class, Agent):
             return agent_class
     except Exception as e:
-        print(f"Failed to load {class_name} from {file_path}: {e}")
+        print(f"{RED}Failed to load {class_name} from {file_path}: {e}{RESET}")
 
     return None
