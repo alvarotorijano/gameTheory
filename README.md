@@ -9,26 +9,24 @@ A tournament platform where students implement strategies for the Iterated Priso
 Get started in two commands:
 
 ```bash
-# 1. Set up Python environment
-python -m venv .venv
-source .venv/bin/activate  # or .venv\Scripts\Activate.ps1 on Windows
-pip install -r requirements.txt
-
-# 2. Run your first match
+# 1. Run your first match
 python utils/match_runner/run_match.py copycat_agent random_agent --rounds 50
+
+# 2. Run a full tournament
+python utils/tournament_runner/run_tournament.py --rounds 50
 ```
 
-That's it. You'll see a match between two example agents and the winner.
+That's it. You'll see a match between two example agents, and a tournament with all agents.
 
 ---
 
 ## Next Steps
 
-After running your first match:
+After running your first commands:
 
-1. Run a full tournament: `python utils/tournament_runner/run_tournament.py --rounds 50`
-2. Write your first agent: Copy `agents/copycat_agent/` to `agents/my_strategy/` and edit `agent.py`
-3. Test your agent: `python utils/match_runner/run_match.py my_strategy random_agent --rounds 50`
+1. **Write your first agent:** Copy `agents/copycat_agent/` to `agents/my_strategy/` and edit `agent.py`
+2. **Test your agent:** `python utils/match_runner/run_match.py my_strategy random_agent --rounds 50`
+3. **Run a full tournament:** `python utils/tournament_runner/run_tournament.py --rounds 50`
 
 ---
 
@@ -38,7 +36,7 @@ Full guides and technical details:
 
 - **[Game Rules](docs/game_rules.md)** — How the game works, payoff matrix, match structure
 - **[Student Guide](docs/student_guide.md)** — Step-by-step walkthrough to write your first agent
-- **[Installation](docs/installation.md)** — Detailed environment setup with pyenv (optional)
+- **[Installation](docs/installation.md)** — Environment setup with virtual environments and pyenv (optional)
 - **[Architecture](docs/architecture.md)** — Technical design and component descriptions
 - **[Technical Requirements](docs/requirements.md)** — Complete specifications
 
