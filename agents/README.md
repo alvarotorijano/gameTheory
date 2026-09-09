@@ -1,4 +1,4 @@
-# Agents Folder
+dame # Agents Folder
 
 This folder contains all game agents (strategies for the Iterated Prisoner's Dilemma).
 
