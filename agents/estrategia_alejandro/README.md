@@ -1,33 +1,60 @@
-# Alejandro Agent (Majority Response)
+# Alejandro Agent (Grim Trigger)
 
-**Strategy:** Play the move that the opponent has used most often in the match.
+**Strategy:** Cooperate until the opponent defects once, then defect permanently.
 
 ## Description
 
-The Alejandro Agent is a history-based strategy. It counts the opponent's
-cooperative and defective moves, then responds with the move that appears 
-most frequently. When both moves have the same count, it cooperates.
+The Alejandro Agent implements a deterministic Grim Trigger strategy. It cooperates on the first
+round and continues cooperating while the opponent has never defected. After the first observed
+defection, it defects for the rest of the match.
 
-This makes the opening move cooperative because the history is empty and 
-both counts are zero. After that, the agent adapts to the opponent's 
-dominant behavior instead of copying only the previous round.
+The implementation derives its state directly from `opponent_history`. It does not inspect the
+opponent's identity, files, runtime state, random generator, or tournament ordering. It also does
+not depend on whether the number of rounds is known.
 
 ## Decision Tree
 
 ```mermaid
 graph TD
-	 A["Start Round"] --> B{"Count opponent moves"}
-	 B --> C{"Defections > cooperations?"}
-	 C -->|Yes| D["Defect (D)"]
-	 C -->|No| E["Cooperate (C)"]
-	 D --> F["Next Round"]
-	 E --> F
+    A["Start round"] --> B{"Has the opponent ever defected?"}
+    B -->|No| C["Cooperate (C)"]
+    B -->|Yes| D["Defect (D)"]
 ```
 
 ## Why This Strategy
 
-This strategy balances cooperation and self-protection by following the
-opponent's most common move. It cooperates when there is no clear majority and
-adapts to persistent defection, while remaining simple, deterministic, and
-less reactive to isolated mistakes.
+The tournament rewards total accumulated points. Persistent cooperation earns three points per
+round against cooperative strategies and during self-play. A first defection shows that continued
+unconditional cooperation is unsafe, so the agent switches to permanent defection and cannot be
+repeatedly exploited.
 
+The policy is intentionally simple, deterministic, and valid for both known and unknown horizons.
+
+## Expected Behavior
+
+| Opponent behavior | Alejandro Agent response |
+|---|---|
+| Never defects | Cooperates throughout the match |
+| Defects once | Cooperates in that round, then defects permanently |
+| Always defects | Loses the first-round temptation payoff, then reaches mutual defection |
+| Identical Alejandro Agent | Maintains mutual cooperation |
+
+## Limitations
+
+This is not a universally winning strategy. It ties with an identical copy and loses five points
+overall against Always Defect because its first cooperation occurs before the opponent's move can
+be observed. An isolated mistake can also cause permanent mutual defection.
+
+## Usage
+
+Run a match from the project root:
+
+```bash
+python utils/match_runner/run_match.py estrategia_alejandro random_agent --rounds 50
+```
+
+Include the agent in the full tournament:
+
+```bash
+python utils/tournament_runner/run_tournament.py --rounds 100
+```
