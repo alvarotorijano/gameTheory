@@ -5,6 +5,7 @@ Cooperates on round 1, then plays the opponent's previous move.
 This is a template for student agents to study and modify.
 """
 
+from itertools import count
 from typing import List
 
 from utils.game_core import Agent, COOPERATE, DEFECT
@@ -22,6 +23,7 @@ class CopycatAgent(Agent):
 
     This agent is provided as a template for student assignments.
     """
+    count = 0
 
     def play(self, own_history: List[str], opponent_history: List[str]) -> str:
         """
@@ -34,5 +36,31 @@ class CopycatAgent(Agent):
         Returns:
             Always defect
         """
+        if self.count == 150:
+            return DEFECT
+        opening = [DEFECT, DEFECT, COOPERATE, DEFECT]
+        if self.count < len(opening):
+            return opening[self.count]
+
+        first_four = opponent_history[:4]
+        defects_first_four = first_four.count(DEFECT)
+
+        if first_four == [
+            COOPERATE,
+            COOPERATE,
+            COOPERATE,
+            COOPERATE
+        ]:
+            return DEFECT
         
+        if defects_first_four >= 3:
+            return DEFECT
+
+        recent_opponent = opponent_history[-2:]
+        if recent_opponent == [DEFECT, DEFECT]:
+            return DEFECT
+
+        if opponent_history[-1] == COOPERATE:
+            return COOPERATE
+
         return DEFECT
