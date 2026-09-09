@@ -1,38 +1,31 @@
-"""
-Copycat Agent (Tit-for-Tat) for the Iterated Prisoner's Dilemma.
-
-Cooperates on round 1, then plays the opponent's previous move.
-This is a template for student agents to study and modify.
-"""
+"""Majority-history strategy for the Iterated Prisoner's Dilemma."""
 
 from typing import List
 
 from utils.game_core import Agent, COOPERATE, DEFECT
 
 
-class CopycatAgent(Agent):
+class MyAgent(Agent):
     """
-    Tit-for-Tat strategy: cooperate on round 1, then copy opponent's last move.
-
-    This is one of the most famous strategies in game theory. It's proven to be
-    very effective because it's:
-    - Nice: starts with cooperation
-    - Retaliatory: punishes defection immediately
-    - Forgiving: returns to cooperation if opponent does
-
-    This agent is provided as a template for student assignments.
+    Cooperate when the opponent has cooperated at least as often as they have
+    defected; otherwise, defect.
     """
 
     def play(self, own_history: List[str], opponent_history: List[str]) -> str:
         """
-        Cooperate on round 1, then replicate opponent's last move.
+        Follow the majority of the opponent's previous moves.
 
         Parameters:
-            own_history: This agent's past moves (unused in tit-for-tat).
+            own_history: This agent's past moves.
             opponent_history: Opponent's past moves.
 
         Returns:
-            Always defect
+            "C" if cooperation exceeds or ties defection, otherwise "D".
         """
-        
-        return DEFECT
+        cooperation_count = opponent_history.count(COOPERATE)
+        defection_count = opponent_history.count(DEFECT)
+
+        if defection_count > cooperation_count:
+            return DEFECT
+
+        return COOPERATE

@@ -1,7 +1,4 @@
-# Always-Defect (Tit-for-Tat)
+# Majority-history strategy
 
-**Strategy:**  Always-Defect
-
-## Description
-
- Always-Defect
+**Strategy:** Cooperate when the opponent has cooperated at least as often as they have
+    defected; otherwise, defect.
