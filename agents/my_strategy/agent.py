@@ -5,7 +5,7 @@ from typing import List
 from utils.game_core import Agent, COOPERATE, DEFECT
 
 
-class CopycatAgent(Agent):
+class MyAgent(Agent):
     """
     Cooperate when the opponent has cooperated at least as often as they have
     defected; otherwise, defect.
