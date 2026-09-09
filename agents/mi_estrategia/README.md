@@ -1,5 +1,3 @@
-# Pavlov (Gana-Quédate, Pierde-Cambia)
-
 ## Descripción
 
 Empiezo cooperando siempre. Después de cada ronda, miro si el resultado
@@ -11,13 +9,14 @@ traiciono siempre, porque ya no hay forma de que me castiguen por ello.
 
 ## Diagrama de decisión
 
-\`\`\`mermaid
+```mermaid
 graph TD
-    A[Empieza la ronda] --> B{Es la ultima ronda y se cuantas hay en total?}
-    B -->|Si| C[Traiciono]
-    B -->|No| D{Es la ronda 1?}
-    D -->|Si| E[Coopero]
-    D -->|No| F{Como me fue en la ronda anterior?}
-    F -->|Bien: cooperamos los dos, o traicione y el coopero| G[Repito la misma jugada]
-    F -->|Mal: me traiciono mientras yo cooperaba, o nos traicionamos los dos| H[Cambio de jugada]
-\`\`\`
+A\\\[Empieza la ronda] --> B{Es la ultima ronda y se cuantas hay en total?}
+B -->|Si| C\\\[Traiciono]
+B -->|No| D{Es la ronda 1?}
+D -->|Si| E\\\[Coopero]
+D -->|No| F{Como me fue en la ronda anterior?}
+F -->|Bien: cooperamos los dos, o traicione y el coopero| G\\\[Repito la misma jugada]
+F -->|Mal: me traiciono mientras yo cooperaba, o nos traicionamos los dos| H\\\[Cambio de jugada]
+```
+
